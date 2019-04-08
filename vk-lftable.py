@@ -8,6 +8,15 @@ import sys
 from datetime import datetime
 import sqlite3
 
+import os
+import ssl
+
+import pytz
+
+import urllib.request
+
+from static import *
+
 vk_api_version = 5.90
 
 # Tokens
@@ -21,7 +30,57 @@ try:
 except Exception:
     print("Can't load confirmation_token from file. Exit.")
 
-from static import *
+
+
+def first_run_check():
+    # Create database for users notified about timetables' updates.
+    # 4 tables for each timetable, each with 'users' column
+    if not os.path.exists(users_db):
+        conn = sqlite3.connect(users_db)
+        cursor = conn.cursor()   
+        
+
+        
+        for timetable in all_timetables:
+            cursor.execute('CREATE TABLE ' + timetable.shortname + ' (users)')
+            
+        conn.commit()
+        conn.close()
+        
+        
+    # Create database to store the last update time of each timetable
+    # 1 table, 4 rows (1 for each timetable), 2 columns (ttb name and the time of last update)
+    if not os.path.exists(times_db):
+        
+        conn = sqlite3.connect(times_db)
+        cursor = conn.cursor()
+        
+        
+        cursor.execute('CREATE TABLE times (ttb, time)')
+        conn.commit()
+        
+        for timetable in all_timetables:
+            cursor.execute('INSERT INTO times VALUES ("' + timetable.shortname + '", "")')
+        
+        conn.commit()
+        conn.close()
+        
+        
+# Sets times to the 'times.db' immediately after the run WITHOUT notifiying users 
+# Prevents late notifications if the program was down for a long time.
+def db_set_times_after_run():
+    conn = sqlite3.connect(times_db)
+    cursor = conn.cursor()
+    
+    for timetable in all_timetables:
+        
+        update_time = ttb_gettime(timetable).strftime('%d.%m.%Y %H:%M:%S')
+        
+        cursor.execute("UPDATE times SET time = '" + update_time + "' WHERE (ttb = ?)", (timetable.shortname,));
+        
+    conn.commit()
+    conn.close()
+       
 
 # The most important function of the program.
 # Get and return timetable's mtime using urllib module. 
@@ -107,7 +166,7 @@ def message_text():
 
 
 def callback_do(callback):
-	api.messages.send(access_token=vk_token, user_id=str(user_id), message=message_text(), keyboard=keyboard())
+    api.messages.send(access_token=vk_token, user_id=str(user_id), message=message_text(), keyboard=keyboard())
 
 
 
@@ -154,4 +213,6 @@ def main_handler():
 
 
 if __name__ == '__main__':
+    first_run_check()
+    db_set_times_after_run()
     app.run(debug=True, host='0.0.0.0', port=80)
