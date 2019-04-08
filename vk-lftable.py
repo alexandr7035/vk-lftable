@@ -17,7 +17,7 @@ import urllib.request
 
 from static import *
 
-vk_api_version = 5.90
+
 
 # Tokens
 try:

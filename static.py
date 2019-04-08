@@ -2,6 +2,9 @@
 class TTBS():
     pass
 
+# API version
+vk_api_version = 5.90
+
 # Databases.
 db_dir = 'db/'
 users_db = db_dir + 'notify_users.db'
