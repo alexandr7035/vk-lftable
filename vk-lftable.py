@@ -6,7 +6,7 @@ import vk
 
 import sys
 from datetime import datetime
-
+import sqlite3
 
 vk_api_version = 5.90
 
@@ -27,14 +27,14 @@ from static import *
 current_callback = ''
 
 # Function to create button
-def create_button(button_text, button_callback):
+def create_button(button_text, button_callback, color):
     button = {
         "action": {
         "type": "text",
         "payload": '{\"button\": \"' + button_callback + '\"}',
         "label": button_text
         },
-        "color": "positive"
+        "color": color
         }
         
     return(button)
@@ -43,18 +43,18 @@ def create_button(button_text, button_callback):
 
 ################################### Keyboards ##########################
 
-def menu_keyboard():
+def keyboard():
     
     btn_status = '🔔'
     btn_status = '🔕'
     
-    pravo_c1.btn = create_button('Правоведение - 1⃣ ' + btn_status, pravo_c1.shortname)
-    pravo_c2.btn = create_button('Правоведение - 2⃣ ' + btn_status, pravo_c1.shortname)
-    pravo_c3.btn = create_button('Правоведение - 3⃣ ' + btn_status, pravo_c1.shortname)
-    pravo_c4.btn = create_button('Правоведение - 4⃣ ' + btn_status, pravo_c1.shortname)
+    pravo_c1.btn = create_button('Правоведение - 1⃣ ' + btn_status, pravo_c1.shortname, "positive")
+    pravo_c2.btn = create_button('Правоведение - 2⃣ ' + btn_status, pravo_c1.shortname, "positive")
+    pravo_c3.btn = create_button('Правоведение - 3⃣ ' + btn_status, pravo_c1.shortname, "positive")
+    pravo_c4.btn = create_button('Правоведение - 4⃣ ' + btn_status, pravo_c1.shortname, "negative")
     
-    mag_c1.btn = create_button('Магистратура - 1⃣ ' + btn_status , mag_c1.shortname)
-    mag_c2.btn = create_button('Магистратура - 2⃣ ' + btn_status, mag_c2.shortname)
+    mag_c1.btn = create_button('Магистратура - 1⃣ ' + btn_status , mag_c1.shortname, "positive")
+    mag_c2.btn = create_button('Магистратура - 2⃣ ' + btn_status, mag_c2.shortname, "positive")
     
     
     keyboard = {
@@ -71,21 +71,21 @@ def menu_keyboard():
 
 ######################### Mesages ######################################
 
-def menu_message():
-    menu_text = 'VK-LFTable v1.0: работа с расписанием занятий юридического факультета БГУ.\n\n'
+def message_text():
+    text = 'Настройте нужные уведомления:'
     
-    menu_text += 'Источник: https://law.bsu.by\n'
-    menu_text += 'Информация об авторских правах юрфака: https://law.bsu.by/avtorskie-prava.html\n\n'
     
-    menu_text += 'Выберите нужное расписание:'
-    
-    return(menu_text)
+    return(text)
 
 ########################################################################
 
 
-# The main part. Event handler based on flask
+def callback_do(callback):
+	api.messages.send(access_token=vk_token, user_id=str(user_id), message=message_text(), keyboard=keyboard())
 
+
+
+# The main part. Event handler based on flask
 app = flask.Flask(__name__)
 
 
@@ -111,43 +111,16 @@ def main_handler():
         # User who calls bot
         user_id = data['object']['from_id']
         
-        global current_callback
+        #global current_callback
         
-        
-        def callback_do_action(current_callback, mid):
-            print("User " + str(user_id) + " pressed '" + current_callback + "' button")
-            if current_callback in  ['pravo_c1', 'pravo_c2', 'pravo_c3', 'pravo_c4', 
-                                    'mag_c1', 'mag_c2',
-                                    'refresh', 'notify']:
-                pass
-            
-            
-
-            
-            if current_callback == "menu":
-                api.messages.send(access_token=vk_token, peer_id=str(user_id), message_id=mid, message=menu_message(), keyboard=menu_keyboard(), dont_parse_links=1, photo='inx960x640.jpg')
-            
-        
-        # If users sends text instead of pressing button
-        # Send to main menu
         try:
             current_callback = json.loads(data['object']['payload'])['button']
-            print(data['object']['conversation_message_id'])
             
-            mid = int(data['object']['conversation_message_id'])
-            
-            callback_do_action(current_callback, mid)
+            if current_callback in ['pravo_c1', 'pravo_c2', 'pravo_c3', 'pravo_4', 'mag_c1', 'mag_c2']:
+                callback_do(current_callback)
         except Exception as e:
-            print('exception', e)
-            api.messages.send(access_token=vk_token, user_id=str(user_id), message=menu_message(), keyboard=menu_keyboard())
-            pass
-        """
-
-        
-        mid = int(data['object']['conversation_message_id'])
-        current_callback = json.loads(data['object']['payload'])['button']
-        callback_do_action(current_callback, mid)
-        """
+            api.messages.send(access_token=vk_token, user_id=str(user_id), message=message_text(), keyboard=keyboard())
+            
           
         # Necessary reply
         return 'ok'
