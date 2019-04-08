@@ -2,6 +2,12 @@
 class TTBS():
     pass
 
+# Databases.
+db_dir = 'db/'
+users_db = db_dir + 'notify_users.db'
+times_db = db_dir + 'times.db'
+
+
 # All types of timetables
 pravo_c1 = TTBS()
 pravo_c2 = TTBS()
