@@ -33,13 +33,20 @@ except Exception:
 
 
 def first_run_check():
+    
+    try:
+        os.mkdir(db_dir)
+    except Exception:
+        pass
+    
+    
+    
     # Create database for users notified about timetables' updates.
     # 4 tables for each timetable, each with 'users' column
     if not os.path.exists(users_db):
+        print(users_db)
         conn = sqlite3.connect(users_db)
         cursor = conn.cursor()   
-        
-
         
         for timetable in all_timetables:
             cursor.execute('CREATE TABLE ' + timetable.shortname + ' (users)')
@@ -54,7 +61,6 @@ def first_run_check():
         
         conn = sqlite3.connect(times_db)
         cursor = conn.cursor()
-        
         
         cursor.execute('CREATE TABLE times (ttb, time)')
         conn.commit()
@@ -109,7 +115,30 @@ def ttb_gettime(ttb):
     
     return(date)
     
+# Checks if user is notified when timetable is updated.
+# Used to set text on the "notify" button.
+def check_user_notified(ttb, user_id):
     
+    # Connect to users db.
+    conn = sqlite3.connect(users_db)
+    cursor = conn.cursor()
+        
+    cursor.execute('SELECT users FROM ' + ttb.shortname)
+    result = cursor.fetchall()
+        
+    conn.close()
+    
+    # List for users notifed about current ttb updates.
+    users_to_notify = []
+    for i in result:
+       users_to_notify.append(i[0])
+
+    
+    if user_id in users_to_notify:
+           return True
+    else:
+           return False
+
 
 # Function to create button
 def create_button(button_text, button_callback, color):
@@ -128,25 +157,45 @@ def create_button(button_text, button_callback, color):
 
 ################################### Keyboards ##########################
 
-def keyboard():
+def keyboard(user_id):
     
-    btn_status = '🔔'
-    btn_status = '🔕'
+    # notifications db
+    conn = sqlite3.connect(users_db)
+    cursor = conn.cursor()
+        
     
-    pravo_c1.btn = create_button('Правоведение - 1⃣ ' + btn_status, pravo_c1.shortname, "positive")
-    pravo_c2.btn = create_button('Правоведение - 2⃣ ' + btn_status, pravo_c1.shortname, "positive")
-    pravo_c3.btn = create_button('Правоведение - 3⃣ ' + btn_status, pravo_c1.shortname, "positive")
-    pravo_c4.btn = create_button('Правоведение - 4⃣ ' + btn_status, pravo_c1.shortname, "negative")
+    # Button color and text
+    for ttb in all_timetables:
+        
+        
+        if check_user_notified(ttb, user_id):
+            ttb.btn_icon = '🔕'
+            ttb.btn_color = 'negative'
+        else:
+            ttb.btn_icon = '🔔'
+            ttb.btn_color = 'positive'
+        
+
+     
+    # Close db
+    conn.close()
     
-    mag_c1.btn = create_button('Магистратура - 1⃣ ' + btn_status , mag_c1.shortname, "positive")
-    mag_c2.btn = create_button('Магистратура - 2⃣ ' + btn_status, mag_c2.shortname, "positive")
+    pravo_c1.btn = create_button('Правоведение - 1⃣ ' + pravo_c1.btn_icon, pravo_c1.shortname, pravo_c1.btn_color)
+    pravo_c2.btn = create_button('Правоведение - 2⃣ ' + pravo_c2.btn_icon, pravo_c2.shortname, pravo_c2.btn_color)
+    pravo_c3.btn = create_button('Правоведение - 3⃣ ' + pravo_c3.btn_icon, pravo_c3.shortname, pravo_c3.btn_color)
+    pravo_c4.btn = create_button('Правоведение - 4⃣ ' + pravo_c4.btn_icon, pravo_c4.shortname, pravo_c4.btn_color)
     
+    mag_c1.btn = create_button('Магистратура - 1⃣ ' + mag_c1.btn_icon, mag_c1.shortname, mag_c1.btn_color)
+    mag_c2.btn = create_button('Магистратура - 2⃣ ' + mag_c2.btn_icon, mag_c2.shortname, mag_c2.btn_color)
+    
+ 
     
     keyboard = {
     "one_time": True,
     "buttons": [[pravo_c1.btn, pravo_c2.btn],
                 [pravo_c3.btn, pravo_c4.btn],
-                [mag_c1.btn, mag_c2.btn]] 
+                [mag_c1.btn, mag_c2.btn]]
+               
     } 
      
     return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
@@ -157,15 +206,54 @@ def keyboard():
 ######################### Mesages ######################################
 
 def message_text():
-    text = 'Настройте нужные уведомления:'
-    
+    text = '🔔 Настройте нужные уведомления: 🔔\n'
+    text += '---------\n'
+    text += 'Если Вы не видите клавиатуру, попробуйте использовать браузерную версию VK (https://vk.com)'
     
     return(text)
 
 ########################################################################
 
 
-def callback_do(callback):
+def callback_do(callback, user_id):
+    if callback == 'pravo_c1':
+        current_ttb = pravo_c1
+    elif callback == 'pravo_c2':
+        current_ttb = pravo_c2
+    elif callback == 'pravo_c3':
+        current_ttb = pravo_c3
+    elif callback == 'pravo_c4':
+        current_ttb = pravo_c4
+    
+    elif callback == 'mag_c1':
+        current_ttb = mag_c1
+    elif callback == 'mag_c2':
+        current_ttb = mag_c2
+    
+    
+    #print("user " + user_id + " pressed button '" + callback + "'")
+    
+
+    
+    if check_user_notified(current_ttb, user_id):
+        conn_check = sqlite3.connect(users_db)
+        cursor_check = conn_check.cursor() 
+    
+        #print('DELETE FROM ' + current_ttb.shortname + ' WHERE (users = \'' + str(user_id) + '\')')
+        cursor_check.execute('DELETE FROM ' + current_ttb.shortname + ' WHERE (users = ' + str(user_id) + ')')
+        conn_check.commit()
+        conn_check.close()
+    else:
+        conn_check = sqlite3.connect(users_db)
+        cursor_check = conn_check.cursor() 
+        #print('INSERT INTO ' + current_ttb.shortname + ' VALUES (\'' + user_id + '\')')
+        cursor_check.execute('INSERT INTO ' + current_ttb.shortname + ' VALUES (' + str(user_id) + ')')   
+        conn_check.commit()
+        conn_check.close()
+           
+    
+
+    
     api.messages.send(access_token=vk_token, user_id=str(user_id), message=message_text(), keyboard=keyboard())
 
 
@@ -196,15 +284,15 @@ def main_handler():
         # User who calls bot
         user_id = data['object']['from_id']
         
-        #global current_callback
+        #global callback
         
         try:
-            current_callback = json.loads(data['object']['payload'])['button']
+            callback = json.loads(data['object']['payload'])['button']
             
-            if current_callback in ['pravo_c1', 'pravo_c2', 'pravo_c3', 'pravo_4', 'mag_c1', 'mag_c2']:
-                callback_do(current_callback)
+            if callback in ['pravo_c1', 'pravo_c2', 'pravo_c3', 'pravo_c4', 'mag_c1', 'mag_c2']:
+                callback_do(callback, user_id)
         except Exception as e:
-            api.messages.send(access_token=vk_token, user_id=str(user_id), message=message_text(), keyboard=keyboard())
+            api.messages.send(access_token=vk_token, user_id=str(user_id), message=message_text(), keyboard=keyboard(user_id))
             
           
         # Necessary reply
