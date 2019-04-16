@@ -10,6 +10,9 @@ db_dir = 'db/'
 users_db = db_dir + 'notify_users.db'
 times_db = db_dir + 'times.db'
 
+# Intervals for update checks and notifications(s).
+check_updates_interval = 120
+
 
 # All types of timetables
 pravo_c1 = TTBS()
