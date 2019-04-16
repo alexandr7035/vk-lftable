@@ -20,6 +20,16 @@ from static import *
 from backend import *
 
 
+# For time jobs
+import atexit
+from apscheduler.schedulers.background import BackgroundScheduler
+
+
+
+
+# Shut down the scheduler when exiting the app
+atexit.register(lambda: scheduler.shutdown())
+
 # Tokens
 try:
     from tokens import vk_token
@@ -104,7 +114,21 @@ def message_text():
     text += 'В настоящее время приложение Kate Mobile не поддерживает клавиатуры ботов.'
     
     return(text)
-    
+
+
+
+##################### Time job for notifications ######################
+
+def print_date_time():
+    print(datetime.now().strftime("%A, %d. %B %Y %I:%M:%S %p"))
+
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=print_date_time, trigger="interval", seconds=check_updates_interval)
+scheduler.start()
+
+
+
 
 ########################################################################
 
@@ -154,9 +178,7 @@ def callback_do(callback, user_id):
         
         api.messages.send(access_token=vk_token, user_id=str(user_id), message=text)
     
-    
-    
-    
+      
     # Send main message again.
     api.messages.send(access_token=vk_token, user_id=str(user_id), message=message_text(), keyboard=keyboard())
 
@@ -204,9 +226,10 @@ def main_handler():
         return 'ok'
 
 
+##############################################################
 
 if __name__ == '__main__':
-	# Prepare project structure after the first run
+    # Prepare project structure after the first run
     first_run_check()
     # Write times in the db in order to prevent late notifications
     db_set_times_after_run()
@@ -217,4 +240,7 @@ if __name__ == '__main__':
     
     
     
-    app.run(debug=True, host='0.0.0.0', port=80)
+    app.run(debug=True, host='0.0.0.0', port=80, use_reloader=False)
+
+	
+
