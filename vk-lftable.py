@@ -212,6 +212,10 @@ def message_text():
     text += 'В настоящее время приложение Kate Mobile не поддерживает клавиатуры ботов.'
     
     return(text)
+    
+def reply_text(ttb_name, ttb_status):
+    text += '123'
+    return(text)
 
 ########################################################################
 
@@ -234,7 +238,7 @@ def callback_do(callback, user_id):
     
     #print("user " + user_id + " pressed button '" + callback + "'")
     
-
+    ttext = '123'
     
     if check_user_notified(current_ttb, user_id):
         conn_check = sqlite3.connect(users_db)
@@ -244,6 +248,12 @@ def callback_do(callback, user_id):
         cursor_check.execute('DELETE FROM ' + current_ttb.shortname + ' WHERE (users = ' + str(user_id) + ')')
         conn_check.commit()
         conn_check.close()
+        
+        text = '✅ Отключены уведомления для расписания"' + current_ttb.name + '"'
+     
+        api.messages.send(access_token=vk_token, user_id=str(user_id), message=text)
+
+        
     else:
         conn_check = sqlite3.connect(users_db)
         cursor_check = conn_check.cursor() 
@@ -251,10 +261,15 @@ def callback_do(callback, user_id):
         cursor_check.execute('INSERT INTO ' + current_ttb.shortname + ' VALUES (' + str(user_id) + ')')   
         conn_check.commit()
         conn_check.close()
-           
+        
+        text = '✅ Включены уведомления для расписания"' + current_ttb.name + '"'
+        
+        api.messages.send(access_token=vk_token, user_id=str(user_id), message=text)
     
-
     
+    
+    
+    # Send main message again.
     api.messages.send(access_token=vk_token, user_id=str(user_id), message=message_text(), keyboard=keyboard())
 
 
@@ -279,8 +294,7 @@ def main_handler():
     
     # If got message from user
     elif data['type'] == 'message_new':
-        session = vk.Session()
-        api = vk.API(session, v=vk_api_version)
+
 
         # User who calls bot
         user_id = data['object']['from_id']
@@ -293,6 +307,8 @@ def main_handler():
             if callback in ['pravo_c1', 'pravo_c2', 'pravo_c3', 'pravo_c4', 'mag_c1', 'mag_c2']:
                 callback_do(callback, user_id)
         except Exception as e:
+        
+
             api.messages.send(access_token=vk_token, user_id=str(user_id), message=message_text(), keyboard=keyboard(user_id))
             
           
@@ -304,4 +320,11 @@ def main_handler():
 if __name__ == '__main__':
     first_run_check()
     db_set_times_after_run()
+    
+    
+    session = vk.Session()
+    api = vk.API(session, v=vk_api_version)
+    
+    
+    
     app.run(debug=True, host='0.0.0.0', port=80)
