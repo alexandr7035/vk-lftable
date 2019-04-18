@@ -1,4 +1,4 @@
-#!./venv/bin/python3
+#!./venv/bin/python3 -B
 
 import sqlite3
 # Database with upate times of each timetable
