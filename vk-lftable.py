@@ -15,6 +15,8 @@ import pytz
 
 import urllib.request
 
+import time
+
 # See this fiels understand how everything works.
 from static import *
 from backend import *
@@ -90,7 +92,7 @@ def keyboard(user_id):
     mag_c1.btn = create_button('Магистратура - 1⃣ ' + mag_c1.btn_icon, mag_c1.shortname, mag_c1.btn_color)
     mag_c2.btn = create_button('Магистратура - 2⃣ ' + mag_c2.btn_icon, mag_c2.shortname, mag_c2.btn_color)
     
- 
+	
     
     keyboard = {
     "one_time": True,
@@ -102,29 +104,114 @@ def keyboard(user_id):
      
     return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
 
+def notification_keyboard():
+    
+    ok_button = create_button('✔ ОК', 'notification_ok', 'positive')
 
-
-
+    keyboard = {
+    "one_time": True,
+    "buttons": [[ok_button]]
+                 
+    } 
+    
+    return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
+    
 ######################### Mesages ######################################
 
 def message_text():
-    text = '🔔 Настройте нужные уведомления: 🔔\n'
-    text += '---------\n'
+    text = '🛠 Настройте нужные уведомления: 🛠\n'
+    text += "\n"
     text += 'Если Вы не видите клавиатуру, попробуйте использовать браузерную версию VK (https://vk.com)\n'
-    text += 'В настоящее время приложение Kate Mobile не поддерживает клавиатуры ботов.'
+    text += 'На данный момент многие приложения, в т.ч. Kate Mobile и VK mp3, не поддерживают клавиатуры ботов.'
     
     return(text)
 
 
 
 ##################### Time job for notifications ######################
-
+"""
 def print_date_time():
     print(datetime.now().strftime("%A, %d. %B %Y %I:%M:%S %p"))
+"""
+
+def send_notification(user_id, ttb, update_time):
+    notification_text = '🔔 Обновлено расписание "' + ttb.name + '" 🔔' + '\n'
+    notification_text += 'Дата обновления: ' + update_time.strftime('%d.%m.%Y') + '\n'
+    notification_text += 'Время обновления: ' + update_time.strftime('%H:%M') + '\n'
+    notification_text += '⬇️ Скачать: ' + ttb.url + '\n\n'
+    
+    api.messages.send(access_token=vk_token, user_id=str(user_id), message=notification_text, keyboard=notification_keyboard())
 
 
+# Notification message. 
+def notifications_check():
+    
+    print('CHECK STARTED: ', datetime.now().strftime("%A, %d. %B %Y %I:%M:%S %p"))
+    
+    conn_times_db = sqlite3.connect(times_db)
+    cursor_times_db = conn_times_db.cursor()
+    
+    for checking_ttb in all_timetables:
+        
+        # Get ttb update time from law.bsu.by
+        update_time = ttb_gettime(checking_ttb).strftime('%d.%m.%Y %H:%M:%S')
+        
+        
+        # Get old update time from db.
+        cursor_times_db.execute("SELECT time  FROM times WHERE (ttb = ?)", (checking_ttb.shortname,));
+        result = cursor_times_db.fetchall()
+        old_update_time = result[0][0]
+        del(result)
+        
+        
+        
+        # String dates to datetime objects
+        dt_update_time = datetime.strptime(update_time, '%d.%m.%Y %H:%M:%S')
+        dt_old_update_time = datetime.strptime(old_update_time, '%d.%m.%Y %H:%M:%S')
+        
+        
+        # If the timetable was updated, sends it to all users 
+        #+ from certain table in 'users.db'
+        if dt_update_time > dt_old_update_time:
+       
+            # Connect to users db.
+            conn_users_db = sqlite3.connect(users_db)
+            cursor_users_db = conn_users_db.cursor()
+        
+            cursor_users_db.execute('SELECT users FROM ' + checking_ttb.shortname)
+            result = cursor_users_db.fetchall()
+
+            conn_users_db.close()
+    
+            # List for users notifed about current timetable updates.
+            users_to_notify = []
+            for i in result:
+                users_to_notify.append(i[0])
+            del(result)
+            
+            
+            
+            # Send notifications to users.
+            for user_id in users_to_notify:
+                
+                send_notification(user_id, checking_ttb, dt_update_time)
+                
+                time.sleep(send_message_interval)
+                
+            
+            # Writing new update time to the database.
+            cursor_times_db.execute("UPDATE times SET time = '" + update_time + "' WHERE (ttb = ?)", (checking_ttb.shortname,));
+            conn_times_db.commit()
+            
+        time.sleep(send_message_interval)
+    
+    # Close 'times.db' until next check.
+    conn_times_db.close()
+
+# Add and run time job
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=print_date_time, trigger="interval", seconds=check_updates_interval)
+# Set_updates_interval from 'static.py'
+scheduler.add_job(func=notifications_check, trigger="interval", seconds=check_updates_interval)
 scheduler.start()
 
 
@@ -216,6 +303,9 @@ def main_handler():
             
             if callback in ['pravo_c1', 'pravo_c2', 'pravo_c3', 'pravo_c4', 'mag_c1', 'mag_c2']:
                 callback_do(callback, user_id)
+            elif callback == 'notification_ok':
+                api.messages.send(access_token=vk_token, user_id=str(user_id), message=message_text(), keyboard=keyboard(user_id))
+            
         except Exception as e:
         
 
@@ -242,5 +332,5 @@ if __name__ == '__main__':
     
     app.run(debug=True, host='0.0.0.0', port=80, use_reloader=False)
 
-	
+    
 
