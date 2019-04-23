@@ -20,9 +20,9 @@ def first_run_check():
     
     # Create database for users notified about timetables' updates.
     # 4 tables for each timetable, each with 'users' column
-    if not os.path.exists(users_db):
-        print(users_db)
-        conn = sqlite3.connect(users_db)
+    if not os.path.exists(notifications_db):
+        print(notifications_db)
+        conn = sqlite3.connect(notifications_db)
         cursor = conn.cursor()   
         
         for timetable in all_timetables:
@@ -47,6 +47,20 @@ def first_run_check():
         
         conn.commit()
         conn.close()
+        
+        
+        
+    # Database for all clients.
+    if not os.path.exists(clients_db):
+        conn = sqlite3.connect(clients_db)
+
+        cursor = conn.cursor()
+        
+        cursor.execute('CREATE TABLE clients (user_id)')
+        
+        conn.commit()
+        conn.close()
+    
         
 # Sets times to the 'times.db' immediately after the run WITHOUT notifiying users 
 # Prevents late notifications if the program was down for a long time.
@@ -97,7 +111,7 @@ def ttb_gettime(ttb):
 def check_user_notified(ttb, user_id):
     
     # Connect to users db.
-    conn = sqlite3.connect(users_db)
+    conn = sqlite3.connect(notifications_db)
     cursor = conn.cursor()
         
     cursor.execute('SELECT users FROM ' + ttb.shortname)

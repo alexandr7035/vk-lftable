@@ -58,7 +58,7 @@ def create_button(button_text, button_callback, color):
 def main_keyboard(user_id):
 
     # notifications db
-    conn = sqlite3.connect(users_db)
+    conn = sqlite3.connect(notifications_db)
     cursor = conn.cursor()
 
 
@@ -179,13 +179,13 @@ def notifications_check():
         if dt_update_time > dt_old_update_time:
 
             # Connect to users db.
-            conn_users_db = sqlite3.connect(users_db)
-            cursor_users_db = conn_users_db.cursor()
+            conn_notifications_db = sqlite3.connect(notifications_db)
+            cursor_notifications_db = conn_notifications_db.cursor()
 
-            cursor_users_db.execute('SELECT users FROM ' + checking_ttb.shortname)
-            result = cursor_users_db.fetchall()
+            cursor_notifications_db.execute('SELECT users FROM ' + checking_ttb.shortname)
+            result = cursor_notifications_db.fetchall()
 
-            conn_users_db.close()
+            conn_notifications_db.close()
 
             # List for users notifed about current timetable updates.
             users_to_notify = []
@@ -250,7 +250,7 @@ def callback_do(callback, user_id):
     elif callback == 'stop':
         
         # Disable all notifications.
-        conn_check = sqlite3.connect(users_db)
+        conn_check = sqlite3.connect(notifications_db)
         cursor_check = conn_check.cursor()
         
         for ttb in all_timetables:
@@ -275,7 +275,7 @@ def callback_do(callback, user_id):
 
 
     if check_user_notified(current_ttb, user_id):
-        conn_check = sqlite3.connect(users_db)
+        conn_check = sqlite3.connect(notifications_db)
         cursor_check = conn_check.cursor()
 
         #print('DELETE FROM ' + current_ttb.shortname + ' WHERE (users = \'' + str(user_id) + '\')')
@@ -291,7 +291,7 @@ def callback_do(callback, user_id):
 
 
     else:
-        conn_check = sqlite3.connect(users_db)
+        conn_check = sqlite3.connect(notifications_db)
         cursor_check = conn_check.cursor()
         #print('INSERT INTO ' + current_ttb.shortname + ' VALUES (\'' + user_id + '\')')
         cursor_check.execute('INSERT INTO ' + current_ttb.shortname + ' VALUES (' + str(user_id) + ')')

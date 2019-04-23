@@ -7,12 +7,14 @@ vk_api_version = 5.90
 
 # Databases.
 db_dir = 'db/'
-users_db = db_dir + 'notify_users.db'
+notifications_db = db_dir + 'notifications.db'
 times_db = db_dir + 'times.db'
+clients_db = db_dir + 'clients.db'
 
 # Intervals for update checks and notifications(s).
-check_updates_interval = 40
-send_message_interval = 3
+check_updates_interval = 120
+send_message_interval = 2
+next_timetable_interval = 5
 
 # All types of timetables
 pravo_c1 = TTBS()
