@@ -9,11 +9,6 @@ from datetime import datetime
 import sqlite3
 
 import os
-import ssl
-
-import pytz
-
-import urllib.request
 
 import time
 
