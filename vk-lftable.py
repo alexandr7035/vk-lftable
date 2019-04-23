@@ -119,21 +119,20 @@ def main_text():
     text = '🛠 Настройте нужные уведомления. 🛠\n'
     text += "\n"
     text += '⚠ Если Вы не видите клавиатуру, попробуйте использовать браузерную версию VK (https://vk.com).\n'
-    text += 'На данный момент многие приложения, в т.ч. Kate Mobile и VK mp3, не поддерживают клавиатуры ботов.\n\n'
-    
-    text += '⌨️ Введите "/lt", чтобы вывести список ссылок для загрузки файлов с расписаниями.'
+    text += 'На данный момент многие приложения, в т.ч. Kate Mobile и VK mp3, не поддерживают клавиатуры ботов.\n'
 
     return(text)
 
 def download_text():
     text = 'Ссылки для загрузки файлов с расписаниями.\n\n'
     
-    text += '⚠ Если Вы не видите клавиатуру, попробуйте использовать браузерную версию VK (https://vk.com).\n\n'
     
     for ttb in all_timetables:
 
         text += '⬇️ "' + ttb.name + '" - ' + ttb.url + '\n'
-
+    
+    text += '\n⚠ Если Вы не видите клавиатуру, попробуйте использовать браузерную версию VK (https://vk.com).'
+    
     return(text)
 
 
@@ -241,7 +240,37 @@ def callback_do(callback, user_id):
     elif callback == 'mag_c2':
         current_ttb = mag_c2
 
-
+    elif callback == 'download':
+        api.messages.send(access_token=vk_token,
+                      user_id=str(user_id),
+                      message=download_text(),
+                      keyboard=ok_keyboard())
+        return
+        
+    elif callback == 'stop':
+        
+        # Disable all notifications.
+        conn_check = sqlite3.connect(users_db)
+        cursor_check = conn_check.cursor()
+        
+        for ttb in all_timetables:
+            if check_user_notified(ttb, user_id):
+                
+                cursor_check.execute('DELETE FROM ' + ttb.shortname + ' WHERE (users = ' + str(user_id) + ')')
+                conn_check.commit()
+                
+        conn_check.close()
+                
+                
+                
+        
+        stop_text = '🛑 Отключены все уведомления, клавиатура скрыта. \nЧтобы снова начать работу с ботом, напишите любое сообщение'
+        api.messages.send(access_token=vk_token,
+                      user_id=str(user_id),
+                      message=stop_text
+            )
+        return
+    
     print("user " + str(user_id) + " pressed button '" + callback + "'")
 
 
@@ -309,15 +338,7 @@ def main_handler():
         # User who calls bot
         user_id = data['object']['from_id']
 
-        
-        # Print links (command).
-        text_command = data['object']['text']
-        if text_command == '/lt':
-            api.messages.send(access_token=vk_token,
-                              user_id=str(user_id),
-                              message=download_text(),
-                              keyboard=ok_keyboard())
-            return 'ok'
+       
         
         
         # If any button is pressed.
