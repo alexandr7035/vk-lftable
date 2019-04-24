@@ -12,10 +12,10 @@ import os
 
 import time
 
-# See this fiels understand how everything works.
+# See this files understand how everything works.
 from static import *
 from backend import *
-
+from messages import *
 
 # For time jobs
 import atexit
@@ -37,8 +37,7 @@ except Exception:
     print("Can't load confirmation_token from file. Exit.")
 
 
-# Will be romoved later.
-missing_keyboard_warning = '⚠ Если Вы не видите клавиатуру, попробуйте использовать браузерную версию VK (https://vk.com).'
+
 
 ################################### Keyboards ##########################
 
@@ -89,7 +88,7 @@ def main_keyboard(user_id):
     mag_c2.btn = create_button('Маг. - 2⃣ ' + mag_c2.btn_icon, mag_c2.shortname, mag_c2.btn_color)
 
     download_btn = create_button('Скачать ⬇️', 'download', 'positive')
-    stop_btn = create_button('Отключить 🛑', 'stop', 'positive')
+    stop_btn = create_button('Отключить ❌', 'stop', 'positive')
     
     keyboard = {
     "one_time": True,
@@ -113,33 +112,13 @@ def ok_keyboard():
 
     return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
 
-######################### Mesages ######################################
 
-
-
-def main_text():
-    text = '🛠 Выберите нужное действие. 🛠\n'
-    text += "\n"
-    
-    text += missing_keyboard_warning
     
 
-    return(text)
-
-def download_text():
-    text = 'Ссылки для загрузки файлов с расписаниями.\n\n'
-    
-    
-    for ttb in all_timetables:
-
-        text += '⬇️ "' + ttb.name + '" - ' + ttb.url + ' - ' + ttb_gettime(ttb).strftime('%d.%m.%Y %H:%M') + '\n'
-        time.sleep(0.2)
-    
-    text += '\n' + missing_keyboard_warning
-    
-    return(text)
 
 
+
+    
 ##################### Time job for notifications ######################
 
 # Notification text.
@@ -264,11 +243,10 @@ def callback_do(callback, user_id):
         conn_clients_db.commit()
         conn_clients_db.close()
         
-        
-        stop_text = '🛑 Отключены все уведомления, клавиатура скрыта. \nЧтобы снова начать работу с ботом, напишите любое сообщение'
+      
         api.messages.send(access_token=vk_token,
                       user_id=str(user_id),
-                      message=stop_text)
+                      message=stopped_text())
         return 'ok'
     
     
@@ -301,10 +279,9 @@ def callback_do(callback, user_id):
         conn_check.close()
 
         # Info message.
-        text = '❎ Отключены уведомления для расписания "' + current_ttb.name + '".'
         api.messages.send(access_token=vk_token,
                           user_id=str(user_id),
-                          message=text)
+                          message=notification_disabled_text(current_ttb))
     
     
     
@@ -318,10 +295,9 @@ def callback_do(callback, user_id):
         conn_check.close()
         
         # Info message.
-        text = '✅ Включены уведомления для расписания"' + current_ttb.name + '".'
         api.messages.send(access_token=vk_token,
                           user_id=str(user_id),
-                          message=text)
+                          message=notification_enabled_text(current_ttb))
 
 
     # Send main message again.
@@ -382,21 +358,19 @@ def main_handler():
                 return 'ok'
         
 
-        # If user is still not a client, send invitation
+        # If user is still not a client, send invitation 
         if not check_user_is_client(user_id):
             
-            # Send invitation
-            text = '🗓 LFTable-bot: быстрый доступ к расписанию занятий юридического факультета БГУ.\n'
-            text += "⌨️ Введите '/start', чтобы начать работу."
+
             api.messages.send(access_token=vk_token,
                               user_id=str(user_id),
-                              message=text) 
+                              message=start_text()) 
             
             return "ok"
         
 
         
-        # If any button is pressed.
+        # If user is a client and any button is pressed.
         try:
             callback = json.loads(data['object']['payload'])['button']
             callback_do(callback, user_id)
