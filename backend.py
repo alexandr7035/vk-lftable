@@ -129,3 +129,32 @@ def check_user_notified(ttb, user_id):
            return True
     else:
            return False
+           
+           
+# Checks if user is client
+def check_user_is_client(user_id):
+    
+    # Connect to users db.
+    conn = sqlite3.connect(clients_db)
+    cursor = conn.cursor()
+        
+    cursor.execute('SELECT user_id FROM clients')
+    result = cursor.fetchall()
+        
+    conn.close()
+    
+    # List for users notifed about current ttb updates.
+    
+    
+    
+    clients_list = []
+    for i in result:
+       clients_list.append(i[0])
+    
+   
+    
+    if str(user_id) in clients_list:
+           return True
+    else:
+           return False
+
