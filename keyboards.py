@@ -3,6 +3,7 @@ from flask import json
 
 import sqlite3
 from backend import *
+from static import *
 
 # Function to create a button
 def create_button(button_text, button_callback, color):
