@@ -1,4 +1,9 @@
 ######################### Mesages ######################################
+from static import *
+
+# For download_text()
+from backend import ttb_gettime
+import time
 
 # Will be romoved later.
 missing_keyboard_warning = '⚠ Если Вы не видите клавиатуру, попробуйте использовать браузерную версию VK (https://vk.com).'
