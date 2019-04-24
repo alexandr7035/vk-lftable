@@ -87,7 +87,7 @@ def main_keyboard(user_id):
     mag_c2.btn = create_button('Маг. - 2⃣ ' + mag_c2.btn_icon, mag_c2.shortname, mag_c2.btn_color)
 
     download_btn = create_button('Скачать ⬇️', 'download', 'positive')
-    stop_btn = create_button('STOP 🛑', 'stop', 'positive')
+    stop_btn = create_button('Отключить 🛑', 'stop', 'positive')
     
     keyboard = {
     "one_time": True,
@@ -116,7 +116,7 @@ def ok_keyboard():
 
 
 def main_text():
-    text = '🛠 Настройте нужные уведомления. 🛠\n'
+    text = '🛠 Выберите нужное действие. 🛠\n'
     text += "\n"
     text += '⚠ Если Вы не видите клавиатуру, попробуйте использовать браузерную версию VK (https://vk.com).\n'
     text += 'На данный момент многие приложения, в т.ч. Kate Mobile и VK mp3, не поддерживают клавиатуры ботов.\n'
@@ -129,8 +129,9 @@ def download_text():
     
     for ttb in all_timetables:
 
-        text += '⬇️ "' + ttb.name + '" - ' + ttb.url + '\n'
-    
+        text += '⬇️ "' + ttb.name + '" - ' + ttb.url + ' - ' + ttb_gettime(ttb).strftime('%d.%m.%Y %H:%M') + '\n'
+        time.sleep(0.2)
+        
     text += '\n⚠ Если Вы не видите клавиатуру, попробуйте использовать браузерную версию VK (https://vk.com).'
     
     return(text)
@@ -192,6 +193,7 @@ def notifications_check():
             for i in result:
                 users_to_notify.append(i[0])
             del(result)
+            
 
 
             # Send notification to each user.
@@ -226,27 +228,16 @@ scheduler.start()
 def callback_do(callback, user_id):
 
 
-    if callback == 'pravo_c1':
-        current_ttb = pravo_c1
-    elif callback == 'pravo_c2':
-        current_ttb = pravo_c2
-    elif callback == 'pravo_c3':
-        current_ttb = pravo_c3
-    elif callback == 'pravo_c4':
-        current_ttb = pravo_c4
-
-    elif callback == 'mag_c1':
-        current_ttb = mag_c1
-    elif callback == 'mag_c2':
-        current_ttb = mag_c2
-
-    elif callback == 'download':
+    # Download button
+    if callback == 'download':
         api.messages.send(access_token=vk_token,
                       user_id=str(user_id),
                       message=download_text(),
                       keyboard=ok_keyboard())
         return
-        
+    
+    
+    # Stop command    
     elif callback == 'stop':
         
         # Disable all notifications.
@@ -260,16 +251,39 @@ def callback_do(callback, user_id):
                 conn_check.commit()
                 
         conn_check.close()
-                
-                
-                
+               
+        
+        # Remove user id from clients_db
+        conn_clients_db = sqlite3.connect(clients_db)
+        cursor_clients_db = conn_clients_db.cursor()
+        
+        cursor_clients_db.execute('DELETE FROM clients WHERE (user_id = "' + str(user_id) + '")')
+        conn_clients_db.commit()
+        conn_clients_db.close()
+        
         
         stop_text = '🛑 Отключены все уведомления, клавиатура скрыта. \nЧтобы снова начать работу с ботом, напишите любое сообщение'
         api.messages.send(access_token=vk_token,
                       user_id=str(user_id),
-                      message=stop_text
-            )
-        return
+                      message=stop_text)
+        return 'ok'
+    
+    
+    # TTB buttons
+    elif callback == 'pravo_c1':
+        current_ttb = pravo_c1
+    elif callback == 'pravo_c2':
+        current_ttb = pravo_c2
+    elif callback == 'pravo_c3':
+        current_ttb = pravo_c3
+    elif callback == 'pravo_c4':
+        current_ttb = pravo_c4
+
+    elif callback == 'mag_c1':
+        current_ttb = mag_c1
+    elif callback == 'mag_c2':
+        current_ttb = mag_c2
+    
     
     print("user " + str(user_id) + " pressed button '" + callback + "'")
 
@@ -288,7 +302,9 @@ def callback_do(callback, user_id):
         api.messages.send(access_token=vk_token,
                           user_id=str(user_id),
                           message=text)
-
+    
+    
+    
 
     else:
         conn_check = sqlite3.connect(notifications_db)
@@ -310,8 +326,7 @@ def callback_do(callback, user_id):
                       user_id=str(user_id),
                       message=main_text(),
                       keyboard=main_keyboard())
-
-
+                      
 
 # The main part. Event handler based on flask
 app = flask.Flask(__name__)
@@ -337,9 +352,46 @@ def main_handler():
 
         # User who calls bot
         user_id = data['object']['from_id']
-
        
         
+        message_text = data['object']['text']
+
+            
+        # If user is not a client and wants to become one    
+        if message_text in ['/start'] and not check_user_is_client(user_id):
+       
+                # Add user id from clients_db
+                conn_clients_db = sqlite3.connect(clients_db)
+                cursor_clients_db = conn_clients_db.cursor()
+        
+                cursor_clients_db.execute('INSERT INTO clients VALUES ("'  + str(user_id) + '")')
+                conn_clients_db.commit()
+               
+                
+                conn_clients_db.close()
+                
+                api.messages.send(access_token=vk_token,
+                              user_id=str(user_id),
+                              message=main_text(),
+                              keyboard=main_keyboard(user_id))
+                
+            
+                return 'ok'
+        
+
+        # If user is still not a client, send invitation
+        if not check_user_is_client(user_id):
+            
+            # Send invitation
+            text = '🗓 LFTable-bot: быстрый доступ к расписанию занятий юридического факультета БГУ.\n'
+            text += "⌨️ Введите '/start', чтобы начать работу."
+            api.messages.send(access_token=vk_token,
+                              user_id=str(user_id),
+                              message=text) 
+            
+            return "ok"
+        
+
         
         # If any button is pressed.
         try:
