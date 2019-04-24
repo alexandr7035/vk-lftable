@@ -37,6 +37,8 @@ except Exception:
     print("Can't load confirmation_token from file. Exit.")
 
 
+# Will be romoved later.
+missing_keyboard_warning = '⚠ Если Вы не видите клавиатуру, попробуйте использовать браузерную версию VK (https://vk.com).'
 
 ################################### Keyboards ##########################
 
@@ -118,8 +120,9 @@ def ok_keyboard():
 def main_text():
     text = '🛠 Выберите нужное действие. 🛠\n'
     text += "\n"
-    text += '⚠ Если Вы не видите клавиатуру, попробуйте использовать браузерную версию VK (https://vk.com).\n'
-    text += 'На данный момент многие приложения, в т.ч. Kate Mobile и VK mp3, не поддерживают клавиатуры ботов.\n'
+    
+    text += missing_keyboard_warning
+    
 
     return(text)
 
@@ -131,8 +134,8 @@ def download_text():
 
         text += '⬇️ "' + ttb.name + '" - ' + ttb.url + ' - ' + ttb_gettime(ttb).strftime('%d.%m.%Y %H:%M') + '\n'
         time.sleep(0.2)
-        
-    text += '\n⚠ Если Вы не видите клавиатуру, попробуйте использовать браузерную версию VK (https://vk.com).'
+    
+    text += '\n' + missing_keyboard_warning
     
     return(text)
 
@@ -146,7 +149,7 @@ def send_notification(user_id, ttb, update_time):
     notification_text += 'Время обновления: ' + update_time.strftime('%H:%M') + '\n'
     notification_text += '⬇️ Скачать: ' + ttb.url + '\n\n'
     
-    notification_text += '⚠ Если Вы не видите клавиатуру, попробуйте использовать браузерную версию VK (https://vk.com).'
+    notification_text += missing_keyboard_warning
     
     api.messages.send(access_token=vk_token, user_id=str(user_id), message=notification_text, keyboard=ok_keyboard())
 
