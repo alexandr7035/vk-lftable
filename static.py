@@ -10,6 +10,7 @@ db_dir = 'db/'
 notifications_db = db_dir + 'notifications.db'
 times_db = db_dir + 'times.db'
 clients_db = db_dir + 'clients.db'
+log_dir = 'log/'
 
 # Intervals for update checks and notifications(s).
 check_updates_interval = 120

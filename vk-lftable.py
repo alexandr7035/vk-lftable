@@ -12,11 +12,13 @@ import os
 
 import time
 
+
 # See this files understand how everything works.
 from static import *
 from backend import *
 from messages import *
 from keyboards import *
+from lftable_logger import *
 
 # For time jobs
 import atexit
@@ -292,6 +294,13 @@ def main_handler():
 ##############################################################
 
 if __name__ == '__main__':
+    
+
+
+    
+    logger.info("the program was STARTED now")
+    
+    
     # Prepare project structure after the first run
     first_run_check()
     # Write times in the db in order to prevent late notifications
