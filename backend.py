@@ -153,7 +153,7 @@ def check_user_is_client(user_id):
     
    
     
-    if str(user_id) in clients_list:
+    if user_id in clients_list:
            return True
     else:
            return False

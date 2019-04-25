@@ -1,17 +1,14 @@
 #!./venv/bin/python3 -B
 import flask
-
 from flask import Flask, request, json
 import vk
 
 import sys
-from datetime import datetime
-import sqlite3
-
 import os
-
 import time
 
+import sqlite3
+from datetime import datetime
 
 # See this files understand how everything works.
 from static import *
@@ -37,17 +34,15 @@ except Exception:
     print("Can't load confirmation_token from file. Exit.")
 
 
-
 def bot_send_message(user_id, message_text, keyboard=None):
     
     if keyboard == None:
-        api.messages.send(access_token=vk_token, user_id=str(user_id), message=message_text, keyboard=keyboard)
+        api.messages.send(access_token=vk_token, user_id=user_id, message=message_text, keyboard=keyboard)
     else:
-        api.messages.send(access_token=vk_token, user_id=str(user_id), message=message_text, keyboard=keyboard)
+        api.messages.send(access_token=vk_token, user_id=user_id, message=message_text, keyboard=keyboard)
         
     
 ##################### Time job for notifications ######################
-
 
 # Main function for notifications.
 def notifications_check():
@@ -102,7 +97,7 @@ def notifications_check():
             for user_id in users_to_notify:
                 
                 # Log message
-                logger.info("'" + checking_ttb.shortname + "' notification was sent to user " + str(user_id))
+                logger.info("'" + checking_ttb.shortname + "' notification was sent to user " + user_id)
                 
                 bot_send_message(user_id, notification_text(user_id, checking_ttb, dt_update_time), ok_keyboard())
          
@@ -118,26 +113,26 @@ def notifications_check():
     # Close 'times.db' until next check.
     conn_times_db.close()
 
-
-
-
-
-
 ########################################################################
 
-
+# Function for buttons' callbacks
 def callback_do(callback, user_id):
-
-
+    
+    # Debug message
+    #print("user " + user_id + " pressed button '" + callback + "'")
+    #logger.debug('user ' + user_id + " pressed button '" + callback + "'")
+    
     # Download button
     if callback == 'download':
         bot_send_message(user_id, download_text(), ok_keyboard())
 
-        return
+        return 
     
     
-    # Stop command    
+    # Stop button  
     elif callback == 'stop':
+        
+        
         
         # Disable all notifications.
         conn_check = sqlite3.connect(notifications_db)
@@ -146,7 +141,7 @@ def callback_do(callback, user_id):
         for ttb in all_timetables:
             if check_user_notified(ttb, user_id):
                 
-                cursor_check.execute('DELETE FROM ' + ttb.shortname + ' WHERE (users = ' + str(user_id) + ')')
+                cursor_check.execute('DELETE FROM ' + ttb.shortname + ' WHERE (users = "' + user_id + '")')
                 conn_check.commit()
                 
         conn_check.close()
@@ -155,16 +150,19 @@ def callback_do(callback, user_id):
         # Remove user id from clients_db
         conn_clients_db = sqlite3.connect(clients_db)
         cursor_clients_db = conn_clients_db.cursor()
-        cursor_clients_db.execute('DELETE FROM clients WHERE (user_id = "' + str(user_id) + '")')
+        cursor_clients_db.execute('DELETE FROM clients WHERE (user_id = "' + user_id + '")')
         conn_clients_db.commit()
         conn_clients_db.close()
         
         # Log message
-        logger.info("user "  + str(user_id) + " removed from 'clients.db'")
+        logger.info("user "  + user_id + " removed from 'clients.db'")
+
         
         bot_send_message(user_id, stopped_text())
-
-        return 'ok'
+        
+  
+        
+        return
     
     
     # TTB buttons
@@ -176,48 +174,42 @@ def callback_do(callback, user_id):
         current_ttb = pravo_c3
     elif callback == 'pravo_c4':
         current_ttb = pravo_c4
-
     elif callback == 'mag_c1':
         current_ttb = mag_c1
     elif callback == 'mag_c2':
         current_ttb = mag_c2
     
     
-    print("user " + str(user_id) + " pressed button '" + callback + "'")
+    
 
 
     if check_user_notified(current_ttb, user_id):
         conn_check = sqlite3.connect(notifications_db)
         cursor_check = conn_check.cursor()
 
-        cursor_check.execute('DELETE FROM ' + current_ttb.shortname + ' WHERE (users = ' + str(user_id) + ')')
+        cursor_check.execute('DELETE FROM ' + current_ttb.shortname + ' WHERE (users = "' + user_id + '")')
         conn_check.commit()
         conn_check.close()
         
         # Log message
-        logger.info('user ' + str(user_id) + " disabled notifications for the '" + current_ttb.shortname + "' timetable")
+        logger.info('user ' + user_id + " disabled notifications for the '" + current_ttb.shortname + "' timetable")
         
         # Info message.
         bot_send_message(user_id, notification_disabled_text(current_ttb))
     
-    
-    
-
     else:
         conn_check = sqlite3.connect(notifications_db)
         cursor_check = conn_check.cursor()
-        #print('INSERT INTO ' + current_ttb.shortname + ' VALUES (\'' + user_id + '\')')
-        cursor_check.execute('INSERT INTO ' + current_ttb.shortname + ' VALUES (' + str(user_id) + ')')
+        cursor_check.execute('INSERT INTO ' + current_ttb.shortname + ' VALUES ("' + user_id + '")')
         conn_check.commit()
         conn_check.close()
         
         
         # Log message
-        logger.info('user ' + str(user_id) + " enabled notifications for the '" + current_ttb.shortname + "' timetable")
+        logger.info('user ' + user_id + " enabled notifications for the '" + current_ttb.shortname + "' timetable")
         
         # Info message.
         bot_send_message(user_id, notification_enabled_text(current_ttb))
-
 
 
     # Send main message again.
@@ -227,7 +219,6 @@ def callback_do(callback, user_id):
 
 # The main part. Event handler based on flask
 app = flask.Flask(__name__)
-
 
 @app.route('/', methods=['POST'])
 def main_handler():
@@ -239,7 +230,8 @@ def main_handler():
 
     if 'type' not in data.keys():
         return 'not vk'
-
+    
+    # Send confirmation token to vk if requested
     if data['type'] == 'confirmation':
         return confirmation_token
 
@@ -254,38 +246,30 @@ def main_handler():
             return('ok')
         
         # User who calls bot
-        user_id = data['object']['from_id']
-        
-        
-        # For checking text commands
-        message_text = data['object']['text']
+        user_id = str(data['object']['from_id'])
+                
             
-        # If user is not a client and wants to become one    
+        # If user is not a client and sends '/start' command  
+        message_text = data['object']['text']
         if message_text in ['/start'] and not check_user_is_client(user_id):
        
                 # Add user id from clients_db
                 conn_clients_db = sqlite3.connect(clients_db)
                 cursor_clients_db = conn_clients_db.cursor()
-                cursor_clients_db.execute('INSERT INTO clients VALUES ("'  + str(user_id) + '")')
+                cursor_clients_db.execute('INSERT INTO clients VALUES ("'  + user_id + '")')
                 conn_clients_db.commit()
                 conn_clients_db.close()
                 
-                logger.info("user "  + str(user_id) + " added to 'clients.db'")
+                logger.info("user "  + user_id + " added to 'clients.db'")
                 
                 bot_send_message(user_id, main_text(), main_keyboard(user_id))
                 
-
-                
-            
                 return 'ok'
         
 
         # If user is still not a client, send invitation 
-        if not check_user_is_client(user_id):
-            
+        if not check_user_is_client(user_id):   
             bot_send_message(user_id, start_text())
-            
-            
             return "ok"
         
 
@@ -295,12 +279,11 @@ def main_handler():
             callback = json.loads(data['object']['payload'])['button']
             callback_do(callback, user_id)
             return 'ok'
-        except Exception as e:
-            print('callback exception')
             
+        except Exception:
+            print('ceeeeeeeeeee')
+            # Reply for any invalid text message - send menu again.
             bot_send_message(user_id, main_text(), main_keyboard(user_id))
-            
-
             return 'ok'
             
 
