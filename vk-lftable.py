@@ -77,7 +77,10 @@ def notifications_check():
         # If the timetable was updated, sends it to all users
         #+ from certain table in 'users.db'
         if dt_update_time > dt_old_update_time:
-
+            print('updated')
+            # Log message
+            logger.info("'" + checking_ttb.shortname + "' timetable was updated at " + update_time)
+            
             # Connect to users db.
             conn_notifications_db = sqlite3.connect(notifications_db)
             cursor_notifications_db = conn_notifications_db.cursor()
@@ -97,6 +100,9 @@ def notifications_check():
 
             # Send notification to each user.
             for user_id in users_to_notify:
+                
+                # Log message
+                logger.info("'" + checking_ttb.shortname + "' notification was sent to user " + str(user_id))
                 
                 bot_send_message(user_id, notification_text(user_id, checking_ttb, dt_update_time), ok_keyboard())
          
@@ -149,10 +155,12 @@ def callback_do(callback, user_id):
         # Remove user id from clients_db
         conn_clients_db = sqlite3.connect(clients_db)
         cursor_clients_db = conn_clients_db.cursor()
-        
         cursor_clients_db.execute('DELETE FROM clients WHERE (user_id = "' + str(user_id) + '")')
         conn_clients_db.commit()
         conn_clients_db.close()
+        
+        # Log message
+        logger.info("user "  + str(user_id) + " removed from 'clients.db'")
         
         bot_send_message(user_id, stopped_text())
 
@@ -182,11 +190,13 @@ def callback_do(callback, user_id):
         conn_check = sqlite3.connect(notifications_db)
         cursor_check = conn_check.cursor()
 
-        #print('DELETE FROM ' + current_ttb.shortname + ' WHERE (users = \'' + str(user_id) + '\')')
         cursor_check.execute('DELETE FROM ' + current_ttb.shortname + ' WHERE (users = ' + str(user_id) + ')')
         conn_check.commit()
         conn_check.close()
-
+        
+        # Log message
+        logger.info('user ' + str(user_id) + " disabled notifications for the '" + current_ttb.shortname + "' timetable")
+        
         # Info message.
         bot_send_message(user_id, notification_disabled_text(current_ttb))
     
@@ -200,6 +210,10 @@ def callback_do(callback, user_id):
         cursor_check.execute('INSERT INTO ' + current_ttb.shortname + ' VALUES (' + str(user_id) + ')')
         conn_check.commit()
         conn_check.close()
+        
+        
+        # Log message
+        logger.info('user ' + str(user_id) + " enabled notifications for the '" + current_ttb.shortname + "' timetable")
         
         # Info message.
         bot_send_message(user_id, notification_enabled_text(current_ttb))
@@ -252,12 +266,11 @@ def main_handler():
                 # Add user id from clients_db
                 conn_clients_db = sqlite3.connect(clients_db)
                 cursor_clients_db = conn_clients_db.cursor()
-        
                 cursor_clients_db.execute('INSERT INTO clients VALUES ("'  + str(user_id) + '")')
                 conn_clients_db.commit()
-               
-                
                 conn_clients_db.close()
+                
+                logger.info("user "  + str(user_id) + " added to 'clients.db'")
                 
                 bot_send_message(user_id, main_text(), main_keyboard(user_id))
                 
@@ -294,10 +307,7 @@ def main_handler():
 ##############################################################
 
 if __name__ == '__main__':
-    
-
-
-    
+        
     logger.info("the program was STARTED now")
     
     
