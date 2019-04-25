@@ -23,9 +23,6 @@ import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
 
 
-# Shut down the scheduler when exiting the app
-atexit.register(lambda: scheduler.shutdown())
-
 # Tokens
 try:
     from tokens import vk_token
@@ -113,11 +110,7 @@ def notifications_check():
     # Close 'times.db' until next check.
     conn_times_db.close()
 
-# Add and run time job
-scheduler = BackgroundScheduler()
-# Set_updates_interval from 'static.py'
-scheduler.add_job(func=notifications_check, trigger="interval", seconds=check_updates_interval)
-scheduler.start()
+
 
 
 
@@ -303,7 +296,18 @@ if __name__ == '__main__':
     first_run_check()
     # Write times in the db in order to prevent late notifications
     db_set_times_after_run()
-
+    
+    
+    # Add a sheduler
+    scheduler = BackgroundScheduler()
+    # Time job for notifications Set_updates_interval from 'static.py'
+    scheduler.add_job(func=notifications_check, trigger="interval", seconds=check_updates_interval)
+    # Start the job
+    scheduler.start()
+    # Shut down the scheduler when exiting the app
+    atexit.register(lambda: scheduler.shutdown())
+    
+    
 
     session = vk.Session()
     api = vk.API(session, v=vk_api_version)
