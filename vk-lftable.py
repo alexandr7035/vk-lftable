@@ -38,12 +38,17 @@ except Exception:
     print("Can't load confirmation_token from file. Exit.")
 
 
+
+def bot_send_message(user_id, message_text, keyboard=None):
+    
+    if keyboard == None:
+        api.messages.send(access_token=vk_token, user_id=str(user_id), message=message_text, keyboard=keyboard)
+    else:
+        api.messages.send(access_token=vk_token, user_id=str(user_id), message=message_text, keyboard=keyboard)
+        
     
 ##################### Time job for notifications ######################
 
-
-    
-    
 
 # Main function for notifications.
 def notifications_check():
@@ -94,8 +99,8 @@ def notifications_check():
             # Send notification to each user.
             for user_id in users_to_notify:
                 
-                api.messages.send(access_token=vk_token, user_id=str(user_id), message=notification_text(user_id, checking_ttb, dt_update_time), keyboard=ok_keyboard())
-                
+                bot_send_message(user_id, notification_text(user_id, checking_ttb, dt_update_time), ok_keyboard())
+         
                 time.sleep(send_message_interval)
 
 
@@ -125,10 +130,8 @@ def callback_do(callback, user_id):
 
     # Download button
     if callback == 'download':
-        api.messages.send(access_token=vk_token,
-                      user_id=str(user_id),
-                      message=download_text(),
-                      keyboard=ok_keyboard())
+        bot_send_message(user_id, download_text(), ok_keyboard())
+
         return
     
     
@@ -156,10 +159,8 @@ def callback_do(callback, user_id):
         conn_clients_db.commit()
         conn_clients_db.close()
         
-      
-        api.messages.send(access_token=vk_token,
-                      user_id=str(user_id),
-                      message=stopped_text())
+        bot_send_message(user_id, stopped_text())
+
         return 'ok'
     
     
@@ -192,9 +193,7 @@ def callback_do(callback, user_id):
         conn_check.close()
 
         # Info message.
-        api.messages.send(access_token=vk_token,
-                          user_id=str(user_id),
-                          message=notification_disabled_text(current_ttb))
+        bot_send_message(user_id, notification_disabled_text(current_ttb))
     
     
     
@@ -208,16 +207,13 @@ def callback_do(callback, user_id):
         conn_check.close()
         
         # Info message.
-        api.messages.send(access_token=vk_token,
-                          user_id=str(user_id),
-                          message=notification_enabled_text(current_ttb))
+        bot_send_message(user_id, notification_enabled_text(current_ttb))
+
 
 
     # Send main message again.
-    api.messages.send(access_token=vk_token,
-                      user_id=str(user_id),
-                      message=main_text(),
-                      keyboard=main_keyboard())
+    bot_send_message(user_id, main_text(), main_keyboard())
+
                       
 
 # The main part. Event handler based on flask
@@ -268,10 +264,9 @@ def main_handler():
                 
                 conn_clients_db.close()
                 
-                api.messages.send(access_token=vk_token,
-                              user_id=str(user_id),
-                              message=main_text(),
-                              keyboard=main_keyboard(user_id))
+                bot_send_message(user_id, main_text(), main_keyboard(user_id))
+                
+
                 
             
                 return 'ok'
@@ -280,10 +275,8 @@ def main_handler():
         # If user is still not a client, send invitation 
         if not check_user_is_client(user_id):
             
-
-            api.messages.send(access_token=vk_token,
-                              user_id=str(user_id),
-                              message=start_text()) 
+            bot_send_message(user_id, start_text())
+            
             
             return "ok"
         
@@ -296,10 +289,10 @@ def main_handler():
             return 'ok'
         except Exception as e:
             print('callback exception')
-            api.messages.send(access_token=vk_token,
-                              user_id=str(user_id),
-                              message=main_text(),
-                              keyboard=main_keyboard(user_id))
+            
+            bot_send_message(user_id, main_text(), main_keyboard(user_id))
+            
+
             return 'ok'
             
 
