@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ######################### Mesages ######################################
 from static import *
 
@@ -55,4 +56,15 @@ def notification_enabled_text(ttb):
 def notification_disabled_text(ttb):
     text = '🕑🔕 Отключены уведомления для расписания "' + ttb.name + '".'
 
+    return(text)
+    
+    
+def notification_text(user_id, ttb, update_time):
+    text = '🔔 Обновлено расписание "' + ttb.name + '" 🔔' + '\n'
+    text += 'Дата обновления: ' + update_time.strftime('%d.%m.%Y') + '\n'
+    text += 'Время обновления: ' + update_time.strftime('%H:%M') + '\n'
+    text += '⬇️ Скачать: ' + ttb.url + '\n\n'
+    
+    text += missing_keyboard_warning
+    
     return(text)

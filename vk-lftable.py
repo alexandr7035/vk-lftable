@@ -38,29 +38,12 @@ except Exception:
     print("Can't load confirmation_token from file. Exit.")
 
 
-
-
-
-
-
-    
-
-
-
-
     
 ##################### Time job for notifications ######################
 
-# Notification text.
-def send_notification(user_id, ttb, update_time):
-    notification_text = '🔔 Обновлено расписание "' + ttb.name + '" 🔔' + '\n'
-    notification_text += 'Дата обновления: ' + update_time.strftime('%d.%m.%Y') + '\n'
-    notification_text += 'Время обновления: ' + update_time.strftime('%H:%M') + '\n'
-    notification_text += '⬇️ Скачать: ' + ttb.url + '\n\n'
+
     
-    notification_text += missing_keyboard_warning
     
-    api.messages.send(access_token=vk_token, user_id=str(user_id), message=notification_text, keyboard=ok_keyboard())
 
 # Main function for notifications.
 def notifications_check():
@@ -110,9 +93,9 @@ def notifications_check():
 
             # Send notification to each user.
             for user_id in users_to_notify:
-
-                send_notification(user_id, checking_ttb, dt_update_time)
-
+                
+                api.messages.send(access_token=vk_token, user_id=str(user_id), message=notification_text(user_id, checking_ttb, dt_update_time), keyboard=ok_keyboard())
+                
                 time.sleep(send_message_interval)
 
 
@@ -259,15 +242,14 @@ def main_handler():
     # If got message from user
     elif data['type'] == 'message_new':
         
+        # Prevent answers to old requests if bot was down
         request_time = data['object']['date']   
-        
         if request_time <= round(time.time()) - 5:
             print('late request')
             return('ok')
         
         # User who calls bot
         user_id = data['object']['from_id']
-        
         
         
         # For checking text commands
