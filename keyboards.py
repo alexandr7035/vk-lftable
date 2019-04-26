@@ -63,6 +63,7 @@ def main_keyboard(user_id):
 
     return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
 
+
 def ok_keyboard():
 
     ok_button = create_button('✔ ОК', 'ok', 'positive')

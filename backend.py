@@ -9,6 +9,9 @@ import urllib.request
 from datetime import datetime
 import pytz
 
+
+# Create necessary files and directories
+#+ except 'log/' dir, which is created by 'lftable_logger.py'
 def first_run_check():
     
     try:
@@ -17,16 +20,15 @@ def first_run_check():
         pass
     
     
-    
     # Create database for users notified about timetables' updates.
     # 4 tables for each timetable, each with 'users' column
     if not os.path.exists(notifications_db):
-        print(notifications_db)
+
         conn = sqlite3.connect(notifications_db)
         cursor = conn.cursor()   
         
         for timetable in all_timetables:
-            cursor.execute('CREATE TABLE ' + timetable.shortname + ' (users)')
+            cursor.execute('CREATE TABLE ' + timetable.shortname + ' (user_id)')
             
         conn.commit()
         conn.close()
@@ -82,7 +84,6 @@ def db_set_times_after_run():
 # Get and return timetable's mtime using urllib module. 
 def ttb_gettime(ttb):
     
-
     # THIS IS A HOTFIX TO PREVENT "CERTIFICATE_VERIFY_FAILED" ERROR!
     # DISABLE THIS LATER
     ctx = ssl.create_default_context()
@@ -114,7 +115,7 @@ def check_user_notified(ttb, user_id):
     conn = sqlite3.connect(notifications_db)
     cursor = conn.cursor()
         
-    cursor.execute('SELECT users FROM ' + ttb.shortname)
+    cursor.execute('SELECT user_id FROM ' + ttb.shortname)
     result = cursor.fetchall()
         
     conn.close()
@@ -131,7 +132,7 @@ def check_user_notified(ttb, user_id):
            return False
            
            
-# Checks if user is client
+# Checks if user is a client of yhe bot
 def check_user_is_client(user_id):
     
     # Connect to users db.
@@ -143,16 +144,12 @@ def check_user_is_client(user_id):
         
     conn.close()
     
-    # List for users notifed about current ttb updates.
-    
-    
-    
+    # List of users notifed about current ttb updates.
     clients_list = []
     for i in result:
        clients_list.append(i[0])
     
-   
-    
+
     if user_id in clients_list:
            return True
     else:

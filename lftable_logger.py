@@ -12,7 +12,6 @@ if not os.path.exists(log_dir):
         sys.exit()
 
 
-
 # A simple logger
 logging_filename = log_dir + 'lftable.log'
 

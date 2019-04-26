@@ -10,14 +10,14 @@ import time
 import sqlite3
 from datetime import datetime
 
-# See this files understand how everything works.
+# See this files to understand how everything works.
 from static import *
 from backend import *
 from messages import *
 from keyboards import *
 from lftable_logger import *
 
-# For time jobs
+# For time jobs (especially for sending notifications)
 import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -30,12 +30,13 @@ try:
     from tokens import vk_token
 except Exception:
     print("Can't load vk_token from file. Exit.")
-
+    sys.exit()
+    
 try:
     from tokens import confirmation_token
 except Exception:
     print("Can't load confirmation_token from file. Exit.")
-
+    sys.exit()
 
 
 
@@ -54,16 +55,17 @@ def bot_send_message(user_id, message_text, keyboard=None):
 # Main function for notifications.
 def notifications_check():
 
-    print('CHECK STARTED: ', datetime.now().strftime("%A, %d. %B %Y %I:%M:%S %p"))
-
+    print('Checking for ttb updates was started: ', datetime.now().strftime("%d.%m.%Y %Y %H:%M:%S"))
+    
+    # Connect to  the times db
     conn_times_db = sqlite3.connect(times_db)
     cursor_times_db = conn_times_db.cursor()
-
+    
+    # Check each ttb for updates (see this list in 'static.py')
     for checking_ttb in all_timetables:
 
         # Get ttb update time from law.bsu.by
         update_time = ttb_gettime(checking_ttb).strftime('%d.%m.%Y %H:%M:%S')
-
 
         # Get old update time from db.
         cursor_times_db.execute("SELECT time  FROM times WHERE (ttb = ?)", (checking_ttb.shortname,));
@@ -76,10 +78,10 @@ def notifications_check():
         dt_old_update_time = datetime.strptime(old_update_time, '%d.%m.%Y %H:%M:%S')
 
 
-        # If the timetable was updated, sends it to all users
+        # If the timetable was updated, sends a notification to each user
         #+ from certain table in 'users.db'
         if dt_update_time > dt_old_update_time:
-            print('updated')
+
             # Log message
             logger.info("'" + checking_ttb.shortname + "' timetable was updated at " + update_time)
             
@@ -87,7 +89,7 @@ def notifications_check():
             conn_notifications_db = sqlite3.connect(notifications_db)
             cursor_notifications_db = conn_notifications_db.cursor()
 
-            cursor_notifications_db.execute('SELECT users FROM ' + checking_ttb.shortname)
+            cursor_notifications_db.execute('SELECT user_id FROM ' + checking_ttb.shortname)
             result = cursor_notifications_db.fetchall()
 
             conn_notifications_db.close()
@@ -99,26 +101,28 @@ def notifications_check():
             del(result)
             
 
-
-            # Send notification to each user.
+            # Send a notification to each user.
             for user_id in users_to_notify:
                 
                 # Log message
                 logger.info("'" + checking_ttb.shortname + "' notification was sent to user " + user_id)
                 
                 bot_send_message(user_id, notification_text(user_id, checking_ttb, dt_update_time), ok_keyboard())
-         
+                
+                # A delay to prevent flood control exceptions
                 time.sleep(send_message_interval)
 
 
             # Writing new update time to the database.
             cursor_times_db.execute("UPDATE times SET time = '" + update_time + "' WHERE (ttb = ?)", (checking_ttb.shortname,));
             conn_times_db.commit()
-
+        
+        # A delay to prevent flood control exceptions
         time.sleep(next_timetable_interval)
 
     # Close 'times.db' until next check.
     conn_times_db.close()
+
 
 ########################################################################
 
@@ -132,15 +136,15 @@ def callback_do(callback, user_id):
     # Download button
     if callback == 'download':
         bot_send_message(user_id, download_text(), ok_keyboard())
-
+        
+        # Skip the code below, exit
         return 
     
     
     # Stop button  
     elif callback == 'stop':
         
-        
-        
+
         # Disable all notifications.
         conn_check = sqlite3.connect(notifications_db)
         cursor_check = conn_check.cursor()
@@ -148,7 +152,7 @@ def callback_do(callback, user_id):
         for ttb in all_timetables:
             if check_user_notified(ttb, user_id):
                 
-                cursor_check.execute('DELETE FROM ' + ttb.shortname + ' WHERE (users = "' + user_id + '")')
+                cursor_check.execute('DELETE FROM ' + ttb.shortname + ' WHERE (user_id = "' + user_id + '")')
                 conn_check.commit()
                 
         conn_check.close()
@@ -164,11 +168,10 @@ def callback_do(callback, user_id):
         # Log message
         logger.info("user "  + user_id + " removed from 'clients.db'")
 
-        
+        # Send 'stop' message
         bot_send_message(user_id, stopped_text())
         
-  
-        
+        # Skip the code below, exit
         return
     
     
@@ -187,14 +190,13 @@ def callback_do(callback, user_id):
         current_ttb = mag_c2
     
     
-    
-
-
+    # TTB button handling
+    # If user id already exists in 'notifications.db', disable notifications and remove it
     if check_user_notified(current_ttb, user_id):
         conn_check = sqlite3.connect(notifications_db)
         cursor_check = conn_check.cursor()
 
-        cursor_check.execute('DELETE FROM ' + current_ttb.shortname + ' WHERE (users = "' + user_id + '")')
+        cursor_check.execute('DELETE FROM ' + current_ttb.shortname + ' WHERE (user_id = "' + user_id + '")')
         conn_check.commit()
         conn_check.close()
         
@@ -204,13 +206,13 @@ def callback_do(callback, user_id):
         # Info message.
         bot_send_message(user_id, notification_disabled_text(current_ttb))
     
+    # Write user id to the 'notifications.db'
     else:
         conn_check = sqlite3.connect(notifications_db)
         cursor_check = conn_check.cursor()
         cursor_check.execute('INSERT INTO ' + current_ttb.shortname + ' VALUES ("' + user_id + '")')
         conn_check.commit()
         conn_check.close()
-        
         
         # Log message
         logger.info('user ' + user_id + " enabled notifications for the '" + current_ttb.shortname + "' timetable")
@@ -298,7 +300,7 @@ def main_handler():
             return 'ok'
             
 
-##############################################################
+####################### Main ##################################
 
 # Log message    
 logger.info("the program was STARTED now")
@@ -307,7 +309,6 @@ logger.info("the program was STARTED now")
 first_run_check()
 # Write times in the db in order to prevent late notifications
 db_set_times_after_run()
-
 
 # VK
 session = vk.Session()
@@ -322,6 +323,7 @@ scheduler.start()
 # Shut down the scheduler when exiting the app
 atexit.register(lambda: scheduler.shutdown())
 
+# Necessary for wsgi
 app.wsgi_app = ProxyFix(app.wsgi_app)
 
 
