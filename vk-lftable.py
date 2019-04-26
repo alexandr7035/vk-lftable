@@ -233,9 +233,9 @@ app = flask.Flask(__name__)
 def main_handler():
 
     data = json.loads(request.data)
-    print(70*'=')
-    print(data)
-    print(70*'=')
+    
+    print(datetime.now().strftime('%d.%m.%Y %H:%M:%S') + ' ---', data, '--- END')
+    
 
     if 'type' not in data.keys():
         return 'not vk'
@@ -252,6 +252,11 @@ def main_handler():
         request_time = data['object']['date']   
         if request_time <= round(time.time()) - 5:
             
+            # Write to log
+            print('late request (unix time - ' + str(request_time) + ') was skipped')
+            logger.info("late request (unix time - " + str(request_time) + ") was skipped")
+            
+            # Skip this request
             return('ok')
         
         # User who calls bot
@@ -290,7 +295,6 @@ def main_handler():
             return 'ok'
             
         except Exception:
-            print('ceeeeeeeeeee')
             # Reply for any invalid text message - send menu again.
             bot_send_message(user_id, main_text(), main_keyboard(user_id))
             return 'ok'
