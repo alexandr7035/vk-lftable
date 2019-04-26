@@ -1,3 +1,6 @@
+# Version number
+lftable_version = '1.0'
+
 # Class for storing timetable's options.
 class TTBS():
     pass
