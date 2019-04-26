@@ -2,3 +2,4 @@ vk
 flask
 pytz
 apscheduler
+gunicorn
