@@ -37,9 +37,7 @@ except Exception:
     print("Can't load confirmation_token from file. Exit.")
 
 
-# VK
-session = vk.Session()
-api = vk.API(session, v=vk_api_version)
+
 
 
 # Function which sends message (used instead of using multiple 'api.messages.send()')
@@ -302,28 +300,31 @@ def main_handler():
 
 ##############################################################
 
+# Log message    
+logger.info("the program was STARTED now")
+    
+# Prepare project structure after the first run
+first_run_check()
+# Write times in the db in order to prevent late notifications
+db_set_times_after_run()
+
+
+# VK
+session = vk.Session()
+api = vk.API(session, v=vk_api_version)
+    
+# Add a sheduler
+scheduler = BackgroundScheduler()
+# Time job for notifications Set_updates_interval from 'static.py'
+scheduler.add_job(func=notifications_check, trigger="interval", seconds=check_updates_interval)
+# Start the job
+scheduler.start()
+# Shut down the scheduler when exiting the app
+atexit.register(lambda: scheduler.shutdown())
+
+app.wsgi_app = ProxyFix(app.wsgi_app)
+
+
+
 if __name__ == '__main__':
-    
-    # Log message    
-    logger.info("the program was STARTED now")
-    
-    # Prepare project structure after the first run
-    first_run_check()
-    # Write times in the db in order to prevent late notifications
-    db_set_times_after_run()
-    
-    
-    # Add a sheduler
-    scheduler = BackgroundScheduler()
-    # Time job for notifications Set_updates_interval from 'static.py'
-    scheduler.add_job(func=notifications_check, trigger="interval", seconds=check_updates_interval)
-    # Start the job
-    scheduler.start()
-    # Shut down the scheduler when exiting the app
-    atexit.register(lambda: scheduler.shutdown())
-
-    app.wsgi_app = ProxyFix(app.wsgi_app)
-    app.run(use_reloader=False)
-
-
-
+    app.run(host='127.0.0.1', port=8080, use_reloader=False)
