@@ -21,6 +21,9 @@ from lftable_logger import *
 import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
 
+# Necessary for gunicorn wsgi
+from werkzeug.contrib.fixers import ProxyFix
+
 
 # Tokens
 try:
@@ -34,6 +37,12 @@ except Exception:
     print("Can't load confirmation_token from file. Exit.")
 
 
+# VK
+session = vk.Session()
+api = vk.API(session, v=vk_api_version)
+
+
+# Function which sends message (used instead of using multiple 'api.messages.send()')
 def bot_send_message(user_id, message_text, keyboard=None):
     
     if keyboard == None:
@@ -242,7 +251,7 @@ def main_handler():
         # Prevent answers to old requests if bot was down
         request_time = data['object']['date']   
         if request_time <= round(time.time()) - 5:
-            print('late request')
+            
             return('ok')
         
         # User who calls bot
@@ -290,9 +299,9 @@ def main_handler():
 ##############################################################
 
 if __name__ == '__main__':
-        
-    logger.info("the program was STARTED now")
     
+    # Log message    
+    logger.info("the program was STARTED now")
     
     # Prepare project structure after the first run
     first_run_check()
@@ -308,14 +317,9 @@ if __name__ == '__main__':
     scheduler.start()
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())
-    
-    
 
-    session = vk.Session()
-    api = vk.API(session, v=vk_api_version)
-
-
-    app.run(debug=True, host='0.0.0.0', port=80, use_reloader=False)
+    app.wsgi_app = ProxyFix(app.wsgi_app)
+    app.run(use_reloader=False)
 
 
 
