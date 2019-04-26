@@ -64,6 +64,6 @@ def notification_text(user_id, ttb, update_time):
     text += 'Время обновления: ' + update_time.strftime('%H:%M') + '\n'
     text += '⬇️ Скачать: ' + ttb.url + '\n\n'
     
-    text += missing_keyboard_warning
+    #text += missing_keyboard_warning
     
     return(text)
