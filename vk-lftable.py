@@ -1,4 +1,4 @@
-#!./venv/bin/python3 -B
+#!/usr/bin/env python3
 import flask
 from flask import Flask, request, json
 import vk
