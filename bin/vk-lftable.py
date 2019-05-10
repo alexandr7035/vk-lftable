@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
+
+import os
+os.chdir('..')
+import sys
+# Add src/' directory with local modules to path
+sys.path.append('src')
+
+
 import flask
 from flask import Flask, request, json
 import vk
 
-import sys
-import os
 import time
 
 import sqlite3

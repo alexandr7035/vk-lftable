@@ -19,4 +19,4 @@ COPY . .
 
 # Run the app
 #CMD ["gunicorn", "vk-lftable:app", "--bind", "127.0.0.1:5000"]
-CMD ["gunicorn", "vk-lftable:app", "--bind", "0.0.0.0:5000"]
+CMD ["gunicorn", "--chdir", "bin/", "vk-lftable:app", "--bind", "0.0.0.0:5000"]
