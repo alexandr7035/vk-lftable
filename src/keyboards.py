@@ -79,7 +79,7 @@ def ok_keyboard():
 
 def start_keyboard():
 
-    start_button = create_button('🗓 Start', 'start', 'primary')
+    start_button = create_button('🗓 Start', 'start', 'positive')
 
     keyboard = {
     "one_time": True,
