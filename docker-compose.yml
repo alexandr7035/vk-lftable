@@ -1,0 +1,14 @@
+# docker-compose.yml
+version: '3'
+services:
+  vk-lftable:
+    image: vk-lftable
+    volumes:
+        - ./log:/vk-lftable/log
+        - ./db:/vk-lftable/db
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+            - 0.0.0.0:80:5000

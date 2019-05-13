@@ -75,3 +75,16 @@ def ok_keyboard():
     }
 
     return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
+
+
+def start_keyboard():
+
+    start_button = create_button('🗓 Start', 'start', 'positive')
+
+    keyboard = {
+    "one_time": True,
+    "buttons": [[start_button]]
+
+    }
+
+    return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
