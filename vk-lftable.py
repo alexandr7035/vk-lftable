@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import os
-os.chdir('..')
 import sys
 # Add src/' directory with local modules to path
 sys.path.append('src')
@@ -342,7 +341,15 @@ atexit.register(lambda: scheduler.shutdown())
 # Necessary for wsgi
 app.wsgi_app = ProxyFix(app.wsgi_app)
 
-
+class LFTableBot():
+	def __init__(self):
+	    # VK
+        session = vk.Session()
+        self.api = vk.API(session, v=vk_api_version)
+        
+    def handle_request(self):
+		pass
+		
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, use_reloader=False)
