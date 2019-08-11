@@ -18,7 +18,7 @@ def create_button(button_text, button_callback, color):
 
     return(button)
 
-
+"""
 def main_keyboard(user_id):
 
     # notifications db
@@ -77,6 +77,8 @@ def ok_keyboard():
     return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
 
 
+
+"""
 def start_keyboard():
 
     start_button = create_button('🗓 Start', 'start', 'positive')
@@ -88,3 +90,4 @@ def start_keyboard():
     }
 
     return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
+

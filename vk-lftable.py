@@ -55,6 +55,47 @@ def bot_send_message(user_id, message_text, keyboard=None):
         api.messages.send(access_token=vk_token, user_id=user_id, message=message_text, keyboard=keyboard)
 
 
+class LFTableBot():
+    def __init__(self):
+        # VK
+        session = vk.Session()
+        self.api = vk.API(session, v=vk_api_version)
+        
+    def handle_request(self, flask_request):
+        data = json.loads(flask_request.data)
+        print(data)
+        
+        if 'type' not in data.keys():
+            return 'not vk'
+
+        # Send confirmation token to vk if requested
+        if data['type'] == 'confirmation':
+            return confirmation_token
+            
+        # If got message from user
+        elif data['type'] == 'message_new':
+            
+            # Prevent answers to old requests if bot was down
+            request_time = data['object']['date']
+            if request_time <= round(time.time()) - 5:
+                return('ok')
+
+            # Get user id
+            user_id = str(data['object']['from_id'])
+            
+            self.send_message(user_id, start_text(), start_keyboard())
+        
+        
+        return 'ok'
+    
+    def send_message(self, user_id, text, keyboard=None):
+        self.api.messages.send(access_token=vk_token, user_id=user_id, message=text, keyboard=keyboard)
+
+        
+
+bot = LFTableBot()
+
+
 ##################### Time job for notifications ######################
 
 # Main function for notifications.
@@ -258,12 +299,17 @@ app = flask.Flask(__name__)
 
 @app.route('/', methods=['POST'])
 def main_handler():
-
+    
+    return(bot.handle_request(request))
+    """
+    return 'ok'
+    
     data = json.loads(request.data)
 
     print(datetime.now().strftime('%d.%m.%Y %H:%M:%S') + ' ---', data, '--- END')
-
-
+    
+    return  
+    
     if 'type' not in data.keys():
         return 'not vk'
 
@@ -313,7 +359,7 @@ def main_handler():
             # Reply for any invalid text message - send menu again.
             bot_send_message(user_id, main_text(), main_keyboard(user_id))
             return 'ok'
-
+    """
 
 ####################### Main ##################################
 
@@ -341,15 +387,8 @@ atexit.register(lambda: scheduler.shutdown())
 # Necessary for wsgi
 app.wsgi_app = ProxyFix(app.wsgi_app)
 
-class LFTableBot():
-	def __init__(self):
-	    # VK
-        session = vk.Session()
-        self.api = vk.API(session, v=vk_api_version)
-        
-    def handle_request(self):
-		pass
-		
+
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=8080, use_reloader=False)
+    bot = LFTableBot()
+    app.run(host='127.0.0.1', port=5080, use_reloader=False)
