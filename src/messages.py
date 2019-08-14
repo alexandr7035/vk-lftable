@@ -8,7 +8,7 @@ import time
 # Will be romoved later.
 missing_keyboard_warning = '⚠ Если Вы не видите клавиатуру, попробуйте использовать браузерную версию VK (https://vk.com).'
 
-def main_text():
+def main_menu_text():
     text = '🗓🛠 Выберите нужное действие.\n'
 
     text += missing_keyboard_warning

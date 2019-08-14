@@ -70,23 +70,34 @@ class LFTableBot():
 
         # Send confirmation token to vk if requested
         if data['type'] == 'confirmation':
-            return confirmation_token
+            returnfirmation_token
             
         # If got message from user
         elif data['type'] == 'message_new':
             
             # Prevent answers to old requests if bot was down
             request_time = data['object']['date']
+            requeste = data['object']['date']
             if request_time <= round(time.time()) - 5:
                 return('ok')
 
             # Get user id
             user_id = str(data['object']['from_id'])
             
-            self.send_message(user_id, start_text(), start_keyboard())
+            # That means a button was pressed
+            if data['object'].get('payload'):
+                self.handle_button_callback(data)
+            # Usual message was sent
+            else:
+                self.send_message(user_id, main_menu_text(), main_keyboard())
+                
+             
         
         
         return 'ok'
+    
+    def handle_button_callback(self):
+		pass
     
     def send_message(self, user_id, text, keyboard=None):
         self.api.messages.send(access_token=vk_token, user_id=user_id, message=text, keyboard=keyboard)

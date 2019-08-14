@@ -18,6 +18,24 @@ def create_button(button_text, button_callback, color):
 
     return(button)
 
+def main_keyboard():
+    pravo_btn = create_button('Правоведение', 'pravo_menu', 'positive')
+    ek_polit_btn = create_button('Эк и политология', 'ek_polit_menu', 'positive')
+    mag_btn  = create_button('Магистратура', 'mag_menu', 'positive')
+    
+    download_btn = create_button('Скачать ⬇️', 'download', 'positive')
+    stop_btn = create_button('Отключить ❌', 'stop', 'positive')
+    
+    keyboard = {
+    "one_time": True,
+    "buttons": [[pravo_btn, ek_polit_btn],
+                [mag_btn, download_btn],
+                [stop_btn]]
+
+    }
+    
+    return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
+
 """
 def main_keyboard(user_id):
 
