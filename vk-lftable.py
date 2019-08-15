@@ -70,7 +70,7 @@ class LFTableBot():
 
         # Send confirmation token to vk if requested
         if data['type'] == 'confirmation':
-            returnfirmation_token
+            return confirmation_token
             
         # If got message from user
         elif data['type'] == 'message_new':
@@ -86,18 +86,25 @@ class LFTableBot():
             
             # That means a button was pressed
             if data['object'].get('payload'):
-                self.handle_button_callback(data)
+                callback = json.loads(data['object']['payload'])['button']
+                self.handle_button_callback(user_id, callback)
             # Usual message was sent
             else:
+				print('receive usual message')
                 self.send_message(user_id, main_menu_text(), main_keyboard())
                 
              
-        
-        
         return 'ok'
     
-    def handle_button_callback(self):
-		pass
+    def handle_button_callback(self, user_id, callback):
+		print('CALLBACK')
+        
+        if callback == 'main_menu':
+            self.send_message(user_id, main_menu_text(), main_keyboard())
+        
+        if callback == 'download':
+            self.send_message(user_id, download_text(), download_keyboard())
+            
     
     def send_message(self, user_id, text, keyboard=None):
         self.api.messages.send(access_token=vk_token, user_id=user_id, message=text, keyboard=keyboard)
