@@ -195,128 +195,6 @@ def notifications_check():
     conn_times_db.close()
 
 
-########################################################################
-
-# Function for buttons' callbacks
-def callback_do(callback, user_id):
-
-    # Debug message
-    #print("user " + user_id + " pressed button '" + callback + "'")
-    #logger.debug('user ' + user_id + " pressed button '" + callback + "'")
-
-    # Start button
-    if callback == 'start' and not check_user_is_client(user_id):
-                print("got button start claabacl")
-                # Add user id from clients_db
-                conn_clients_db = sqlite3.connect(clients_db)
-                cursor_clients_db = conn_clients_db.cursor()
-                cursor_clients_db.execute('INSERT INTO clients VALUES ("'  + user_id + '")')
-                conn_clients_db.commit()
-                conn_clients_db.close()
-
-                logger.info("user "  + user_id + " added to 'clients.db'")
-
-                bot_send_message(user_id, main_text(), main_keyboard(user_id))
-
-                return
-
-    # If user is still not a client, send invitation
-    if not check_user_is_client(user_id):
-            bot_send_message(user_id, start_text(), start_keyboard())
-            return
-
-
-    # Download button
-    if callback == 'download':
-        bot_send_message(user_id, download_text(), ok_keyboard())
-
-        # Skip the code below, exit
-        return
-
-
-    # Stop button
-    elif callback == 'stop':
-
-
-        # Disable all notifications.
-        conn_check = sqlite3.connect(notifications_db)
-        cursor_check = conn_check.cursor()
-
-        for ttb in all_timetables:
-            if check_user_notified(ttb, user_id):
-
-                cursor_check.execute('DELETE FROM ' + ttb.shortname + ' WHERE (user_id = "' + user_id + '")')
-                conn_check.commit()
-
-        conn_check.close()
-
-
-        # Remove user id from clients_db
-        conn_clients_db = sqlite3.connect(clients_db)
-        cursor_clients_db = conn_clients_db.cursor()
-        cursor_clients_db.execute('DELETE FROM clients WHERE (user_id = "' + user_id + '")')
-        conn_clients_db.commit()
-        conn_clients_db.close()
-
-        # Log message
-        logger.info("user "  + user_id + " removed from 'clients.db'")
-
-        # Send 'stop' message
-        bot_send_message(user_id, stopped_text())
-
-        # Skip the code below, exit
-        return
-
-
-    # TTB buttons
-    elif callback == 'pravo_c1':
-        current_ttb = pravo_c1
-    elif callback == 'pravo_c2':
-        current_ttb = pravo_c2
-    elif callback == 'pravo_c3':
-        current_ttb = pravo_c3
-    elif callback == 'pravo_c4':
-        current_ttb = pravo_c4
-    elif callback == 'mag_c1':
-        current_ttb = mag_c1
-    elif callback == 'mag_c2':
-        current_ttb = mag_c2
-
-
-    # TTB button handling
-    # If user id already exists in 'notifications.db', disable notifications and remove it
-    if check_user_notified(current_ttb, user_id):
-        conn_check = sqlite3.connect(notifications_db)
-        cursor_check = conn_check.cursor()
-
-        cursor_check.execute('DELETE FROM ' + current_ttb.shortname + ' WHERE (user_id = "' + user_id + '")')
-        conn_check.commit()
-        conn_check.close()
-
-        # Log message
-        logger.info('user ' + user_id + " disabled notifications for the '" + current_ttb.shortname + "' timetable")
-
-        # Info message.
-        bot_send_message(user_id, notification_disabled_text(current_ttb))
-
-    # Write user id to the 'notifications.db'
-    else:
-        conn_check = sqlite3.connect(notifications_db)
-        cursor_check = conn_check.cursor()
-        cursor_check.execute('INSERT INTO ' + current_ttb.shortname + ' VALUES ("' + user_id + '")')
-        conn_check.commit()
-        conn_check.close()
-
-        # Log message
-        logger.info('user ' + user_id + " enabled notifications for the '" + current_ttb.shortname + "' timetable")
-
-        # Info message.
-        bot_send_message(user_id, notification_enabled_text(current_ttb))
-
-
-    # Send main message again.
-    bot_send_message(user_id, main_text(), main_keyboard())
-
 
 
 # The main part. Event handler based on flask
@@ -326,65 +204,6 @@ app = flask.Flask(__name__)
 def main_handler():
     
     return(bot.handle_request(request))
-    """
-    return 'ok'
-    
-    data = json.loads(request.data)
-
-    print(datetime.now().strftime('%d.%m.%Y %H:%M:%S') + ' ---', data, '--- END')
-    
-    return  
-    
-    if 'type' not in data.keys():
-        return 'not vk'
-
-    # Send confirmation token to vk if requested
-    if data['type'] == 'confirmation':
-        return confirmation_token
-
-
-    # If got message from user
-    elif data['type'] == 'message_new':
-
-        # User who calls bot
-        user_id = str(data['object']['from_id'])
-
-
-        # Prevent answers to old requests if bot was down
-        request_time = data['object']['date']
-        if request_time <= round(time.time()) - 5:
-
-            # Write to log
-            print('late request (unix time - ' + str(request_time) + ') was skipped')
-            logger.info("late request (unix time - " + str(request_time) + ") was skipped")
-
-            # Skip this request
-            return('ok')
-
-
-
-        # If user is not a client and sends '/start' command
-        message_text = data['object']['text']
-
-
-
-        # If user is a client and any button is pressed.
-        try:
-            callback = json.loads(data['object']['payload'])['button']
-            callback_do(callback, user_id)
-            return 'ok'
-
-        except Exception:
-
-            # If user is still not a client, send invitation
-            if not check_user_is_client(user_id):
-                bot_send_message(user_id, start_text(), start_keyboard())
-                return "ok"
-
-            # Reply for any invalid text message - send menu again.
-            bot_send_message(user_id, main_text(), main_keyboard(user_id))
-            return 'ok'
-    """
 
 ####################### Main ##################################
 
@@ -400,6 +219,7 @@ db_set_times_after_run()
 session = vk.Session()
 api = vk.API(session, v=vk_api_version)
 
+"""
 # Add a sheduler
 scheduler = BackgroundScheduler()
 # Time job for notifications Set_updates_interval from 'static.py'
@@ -408,6 +228,7 @@ scheduler.add_job(func=notifications_check, trigger="interval", seconds=check_up
 scheduler.start()
 # Shut down the scheduler when exiting the app
 atexit.register(lambda: scheduler.shutdown())
+"""
 
 # Necessary for wsgi
 app.wsgi_app = ProxyFix(app.wsgi_app)
