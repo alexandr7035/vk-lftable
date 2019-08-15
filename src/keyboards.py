@@ -19,11 +19,11 @@ def create_button(button_text, button_callback, color):
     return(button)
 
 def main_keyboard():
-    pravo_btn = create_button('Правоведение', 'pravo_menu', 'positive')
-    ek_polit_btn = create_button('Эк и политология', 'ek_polit_menu', 'positive')
-    mag_btn  = create_button('Магистратура', 'mag_menu', 'positive')
+    pravo_btn = create_button('📌 Правоведение', 'pravo_menu', 'positive')
+    ek_polit_btn = create_button('📌 Эк. и полит.', 'ek_polit_menu', 'positive')
+    mag_btn  = create_button('📌 Магистратура', 'mag_menu', 'positive')
     
-    download_btn = create_button('Скачать ⬇️', 'download', 'positive')
+    download_btn = create_button('⬇️ Скачать', 'download', 'positive')
     stop_btn = create_button('Отключить ❌', 'stop', 'positive')
     
     keyboard = {
@@ -36,51 +36,53 @@ def main_keyboard():
     
     return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
 
-"""
-def main_keyboard(user_id):
-
-    # notifications db
-    conn = sqlite3.connect(notifications_db)
-    cursor = conn.cursor()
 
 
-    # Button color and text
-    for ttb in all_timetables:
+def pravo_keyboard():
+    pravo_c1_btn = create_button('Правоведение - 1⃣', pravo_c1.shortname, 'positive')
+    pravo_c2_btn = create_button('Правоведение - 2⃣', pravo_c2.shortname, 'positive')
+    pravo_c3_btn = create_button('Правоведение - 3⃣', pravo_c3.shortname, 'positive')
+    pravo_c4_btn = create_button('Правоведение - 4⃣', pravo_c4.shortname, 'positive')
+    back_button = create_button('⬅️ Назад', 'main_menu', 'positive')
 
-
-        if check_user_notified(ttb, user_id):
-            ttb.btn_icon = '🔕'
-            ttb.btn_color = 'negative'
-        else:
-            ttb.btn_icon = '🔔'
-            ttb.btn_color = 'positive'
-
-
-
-    # Close db
-    conn.close()
-
-    pravo_c1.btn = create_button('Прав. - 1⃣ ' + pravo_c1.btn_icon, pravo_c1.shortname, pravo_c1.btn_color)
-    pravo_c2.btn = create_button('Прав. - 2⃣ ' + pravo_c2.btn_icon, pravo_c2.shortname, pravo_c2.btn_color)
-    pravo_c3.btn = create_button('Прав. - 3⃣ ' + pravo_c3.btn_icon, pravo_c3.shortname, pravo_c3.btn_color)
-    pravo_c4.btn = create_button('Прав. - 4⃣ ' + pravo_c4.btn_icon, pravo_c4.shortname, pravo_c4.btn_color)
-
-    mag_c1.btn = create_button('Маг. - 1⃣ ' + mag_c1.btn_icon, mag_c1.shortname, mag_c1.btn_color)
-    mag_c2.btn = create_button('Маг. - 2⃣ ' + mag_c2.btn_icon, mag_c2.shortname, mag_c2.btn_color)
-
-    download_btn = create_button('Скачать ⬇️', 'download', 'positive')
-    stop_btn = create_button('Отключить ❌', 'stop', 'positive')
-    
-    keyboard = {
+    keyboard = { 
     "one_time": True,
-    "buttons": [[pravo_c1.btn, pravo_c2.btn, pravo_c3.btn], 
-                [pravo_c4.btn, mag_c1.btn, mag_c2.btn],
-                [download_btn, stop_btn]]
-
+    "buttons": [[pravo_c1_btn, pravo_c2_btn],
+                [pravo_c3_btn, pravo_c4_btn],
+                [back_button]]
     }
-
+    
     return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
-"""
+    
+def ek_polit_keyboard():
+    ek_polit_c1_btn = create_button('Эк. и полит. - 1⃣', ek_polit_c1.shortname, 'positive')
+    ek_polit_c2_btn = create_button('Эк. и полит. - 2⃣', ek_polit_c2.shortname, 'positive')
+    ek_polit_c3_btn = create_button('Эк. и полит. - 3⃣', ek_polit_c3.shortname, 'positive')
+    ek_polit_c4_btn = create_button('Эк. и полит. - 4⃣', ek_polit_c4.shortname, 'positive')
+    back_button = create_button('⬅️ Назад', 'main_menu', 'positive')
+
+    keyboard = { 
+    "one_time": True,
+    "buttons": [[ek_polit_c1_btn, ek_polit_c2_btn],
+                [ek_polit_c3_btn, ek_polit_c4_btn],
+                [back_button]]
+    }
+    
+    return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
+    
+def mag_keyboard():
+    mag_c1_btn = create_button('Магистратура- 1⃣', mag_c1.shortname, 'positive')
+    mag_c2_btn = create_button('Магистратура - 2⃣', mag_c2.shortname, 'positive')
+    back_button = create_button('⬅️ Назад', 'main_menu', 'positive')
+
+    keyboard = { 
+    "one_time": True,
+    "buttons": [[mag_c1_btn, mag_c2_btn],
+                [back_button]]
+    }
+    
+    return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))    
+
 
 def download_keyboard():
 

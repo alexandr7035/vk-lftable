@@ -78,8 +78,8 @@ class LFTableBot():
             # Prevent answers to old requests if bot was down
             request_time = data['object']['date']
             requeste = data['object']['date']
-            if request_time <= round(time.time()) - 5:
-                return('ok')
+            #if request_time <= round(time.time()) - 20:
+            #    return('ok')
 
             # Get user id
             user_id = str(data['object']['from_id'])
@@ -90,14 +90,14 @@ class LFTableBot():
                 self.handle_button_callback(user_id, callback)
             # Usual message was sent
             else:
-				print('receive usual message')
+                print('receive usual message')
                 self.send_message(user_id, main_menu_text(), main_keyboard())
                 
              
         return 'ok'
     
     def handle_button_callback(self, user_id, callback):
-		print('CALLBACK')
+        print('CALLBACK')
         
         if callback == 'main_menu':
             self.send_message(user_id, main_menu_text(), main_keyboard())
@@ -105,6 +105,13 @@ class LFTableBot():
         if callback == 'download':
             self.send_message(user_id, download_text(), download_keyboard())
             
+        if callback in ['pravo_menu', 'ek_polit_menu', 'mag_menu']:
+            if callback == 'pravo_menu':
+                self.send_message(user_id, main_menu_text(), pravo_keyboard())
+            elif callback == 'ek_polit_menu':
+                self.send_message(user_id, main_menu_text(), ek_polit_keyboard())
+            elif callback == 'mag_menu':
+                self.send_message(user_id, main_menu_text(), mag_keyboard())
     
     def send_message(self, user_id, text, keyboard=None):
         self.api.messages.send(access_token=vk_token, user_id=user_id, message=text, keyboard=keyboard)
