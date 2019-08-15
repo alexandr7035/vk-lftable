@@ -17,7 +17,7 @@ class CommonDB():
     def close(self):
         self.connection.commit()
         self.connection.close()
-        
+
 # Stores update time of each timetable
 class TimesDB(CommonDB):
     def __init__(self):
@@ -43,9 +43,9 @@ class TimesDB(CommonDB):
     def write_time(self, timetable_name, update_time):
         self.cursor.execute("UPDATE times SET time = '" + update_time + "' WHERE (ttb = ?)", (timetable_name,))
         self.connection.commit()
-        
-        
-        
+
+
+
 # Stores user_id's of those who enabled notifications
 class NotificationsDB(CommonDB):
     def __init__(self):
@@ -115,10 +115,19 @@ class ClientsDB(CommonDB):
     def add_client(self, user_id):
         self.cursor.execute('INSERT INTO clients VALUES (?)', (user_id,))
         self.connection.commit()
-        
+
     def remove_client(self, user_id):
         self.cursor.execute('DELETE FROM clients WHERE (user_id = "' + user_id + '")')
         self.connection.commit()
+
+    def check_if_user_is_client(self, user_id):
+
+        clients = self.get_clients()
+
+        if user_id in clients:
+            return True
+        else:
+            return False
 
 class StatisticsDB(CommonDB):
     def __init__(self):

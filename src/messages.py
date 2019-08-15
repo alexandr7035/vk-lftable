@@ -40,7 +40,7 @@ def start_text():
     return(text)
 
 
-def stopped_text():
+def stop_text():
     text = '❗️ Отключены все уведомления, клавиатура скрыта. \n'
     text += '️⌨️ ️Чтобы снова начать работу с LFTable, напишите любое сообщение.'
 

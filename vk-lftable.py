@@ -21,6 +21,7 @@ from backend import *
 from messages import *
 from keyboards import *
 from lftable_logger import *
+import src.db_classes
 
 # For time jobs (especially for sending notifications)
 import atexit
@@ -61,6 +62,12 @@ class LFTableBot():
         session = vk.Session()
         self.api = vk.API(session, v=vk_api_version)
         
+        # Objects to access the databases
+        self.timesdb = src.db_classes.TimesDB()
+        self.notificationsdb = src.db_classes.NotificationsDB()
+        self.statisticsdb = src.db_classes.StatisticsDB()
+        self.clientsdb = src.db_classes.ClientsDB()
+        
     def handle_request(self, flask_request):
         data = json.loads(flask_request.data)
         print(data)
@@ -78,20 +85,39 @@ class LFTableBot():
             # Prevent answers to old requests if bot was down
             request_time = data['object']['date']
             requeste = data['object']['date']
-            #if request_time <= round(time.time()) - 20:
-            #    return('ok')
+            if request_time <= round(time.time()) - 5:
+                print('skip request')
+                return('ok')
 
             # Get user id
             user_id = str(data['object']['from_id'])
+            print(user_id)
             
-            # That means a button was pressed
-            if data['object'].get('payload'):
-                callback = json.loads(data['object']['payload'])['button']
-                self.handle_button_callback(user_id, callback)
-            # Usual message was sent
+            
+            self.clientsdb.connect()
+            
+            if self.clientsdb.check_if_user_is_client(user_id) is True:
+            
+                # That means a button was pressed
+                if data['object'].get('payload'):
+                    callback = json.loads(data['object']['payload'])['button']
+                    self.handle_button_callback(user_id, callback)
+                # Usual message was sent
+                else:
+                    print('receive usual message')
+                    self.send_message(user_id, main_menu_text(), main_keyboard())
+                    
             else:
-                print('receive usual message')
-                self.send_message(user_id, main_menu_text(), main_keyboard())
+                if data['object'].get('payload'):
+                    callback = json.loads(data['object']['payload'])['button']
+                    if callback == 'start':
+                        # Add user to clients db
+                        self.clientsdb.add_client(user_id)
+                        self.send_message(user_id, main_menu_text(), main_keyboard())                      
+                else:
+                    self.send_message(user_id, start_text(), start_keyboard())
+            
+            self.clientsdb.close()
                 
              
         return 'ok'
@@ -112,6 +138,12 @@ class LFTableBot():
                 self.send_message(user_id, main_menu_text(), ek_polit_keyboard())
             elif callback == 'mag_menu':
                 self.send_message(user_id, main_menu_text(), mag_keyboard())
+                
+        if callback == 'stop':
+            self.clientsdb.connect()
+            self.clientsdb.remove_client(user_id)
+            self.send_message(user_id, stop_text())
+            
     
     def send_message(self, user_id, text, keyboard=None):
         self.api.messages.send(access_token=vk_token, user_id=user_id, message=text, keyboard=keyboard)
@@ -211,9 +243,9 @@ def main_handler():
 logger.info("the program was STARTED now")
 
 # Prepare project structure after the first run
-first_run_check()
+#first_run_check()
 # Write times in the db in order to prevent late notifications
-db_set_times_after_run()
+#db_set_times_after_run()
 
 # VK
 session = vk.Session()
@@ -238,3 +270,4 @@ app.wsgi_app = ProxyFix(app.wsgi_app)
 if __name__ == '__main__':
     bot = LFTableBot()
     app.run(host='127.0.0.1', port=5080, use_reloader=False)
+    

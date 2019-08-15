@@ -10,9 +10,10 @@ vk_api_version = 5.90
 
 # Databases.
 db_dir = 'db/'
-notifications_db = db_dir + 'notifications.db'
-times_db = db_dir + 'times.db'
-clients_db = db_dir + 'clients.db'
+notificationsdb_path = db_dir + 'notifications.db'
+timesdb_path = db_dir + 'times.db'
+clientsdb_path = db_dir + 'clients.db'
+statisticsdb_path = db_dir + 'statistics.db'
 log_dir = 'log/'
 
 # Intervals for update checks and notifications(s).
