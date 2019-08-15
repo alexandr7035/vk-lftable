@@ -1,8 +1,7 @@
 ######################### Messages ######################################
 from static import *
 
-# For download_text()
-from backend import ttb_gettime
+import src.gettime
 import time
 
 # Will be romoved later.
@@ -22,7 +21,7 @@ def download_text():
 
     for ttb in all_timetables:
 
-        text += '⬇️ "' + ttb.name + '" - ' + ttb.url + ' - ' + ttb_gettime(ttb).strftime('%d.%m.%Y %H:%M') + '\n'
+        text += '⬇️ "' + ttb.name + '" - ' + ttb.url + ' - ' + src.gettime.ttb_gettime(ttb).strftime('%d.%m.%Y %H:%M') + '\n'
         time.sleep(0.2)
 
     text += '\n' + missing_keyboard_warning
