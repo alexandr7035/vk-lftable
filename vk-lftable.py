@@ -17,18 +17,18 @@ import src.static
 import src.messages
 import src.keyboards
 import src.db_classes
-from lftable_logger import *
+from src.lftable_logger import *
 
 
 # Tokens
 try:
-    from tokens import vk_token
+    from src.tokens import vk_token
 except Exception:
     print("Can't load vk_token from file. Exit.")
     sys.exit()
 
 try:
-    from tokens import confirmation_token
+    from src.tokens import confirmation_token
 except Exception:
     print("Can't load confirmation_token from file. Exit.")
     sys.exit()
@@ -183,7 +183,7 @@ class LFTableBot():
 
         
 
-bot = LFTableBot()
+
 
 
 ##################### Time job for notifications ######################
@@ -271,22 +271,19 @@ scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 """
 
-# Necessary for wsgi
-app.wsgi_app = ProxyFix(app.wsgi_app)
+bot = LFTableBot()
 
+app = flask.Flask(__name__)
+
+@app.route('/', methods=['POST'])
+def main_handler():
+    return(bot.handle_request(request))
 
 
 if __name__ == '__main__':
     
-    app = flask.Flask(__name__)
-
-    @app.route('/', methods=['POST'])
-    def main_handler():
-        return(bot.handle_request(request))
-    
     # Log message
     logger.info("the program was STARTED now")
     
-    bot = LFTableBot()
     app.run(host='127.0.0.1', port=5080, use_reloader=False)
     
