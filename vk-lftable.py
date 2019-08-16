@@ -69,6 +69,16 @@ class LFTableBot():
         self.timesdb.close()
         
         
+        # Timejob for notifications
+        # Use 'atexit' to shut down the scheduler when exiting the app
+        scheduler = BackgroundScheduler()
+        scheduler.add_job(func=self.notifications_timejob, 
+                          trigger="interval", 
+                          seconds=src.static.check_updates_interval)
+        scheduler.start()
+        atexit.register(lambda: scheduler.shutdown())
+
+        
     def prepare_workspace(self):
         
         # Create directory for sqlite3 databases
@@ -229,96 +239,66 @@ class LFTableBot():
                               user_id=user_id, 
                               message=text, 
                               keyboard=keyboard)
+                              
+                              
+    def notifications_timejob(self):
+        print('Checking for ttb updates was started: ', datetime.now().strftime("%d.%m.%Y %Y %H:%M:%S"))
 
-        
+        # Connect to the times.db
+        self.timesdb.connect()
 
+        # See 'all_timetables' list in 'src/static.py'
+        for checking_ttb in src.static.all_timetables:
 
+            # Get ttb update time from law.bsu.by
+            update_time = src.gettime.ttb_gettime(checking_ttb).strftime('%d.%m.%Y %H:%M:%S')
 
+            # Get old update time from db.
+            old_update_time = self.timesdb.get_time(checking_ttb.shortname)
 
-##################### Time job for notifications ######################
+            # Convert string dates to datetime objects
+            dt_update_time = datetime.strptime(update_time, '%d.%m.%Y %H:%M:%S')
+            dt_old_update_time = datetime.strptime(old_update_time, '%d.%m.%Y %H:%M:%S')
 
-# Main function for notifications.
-def notifications_check():
+            # Compare the two dates
+            # If the timetable was updated, sends it to all users
+            #+ from certain table in 'users.db'
+            if dt_update_time > dt_old_update_time:
 
-    print('Checking for ttb updates was started: ', datetime.now().strftime("%d.%m.%Y %Y %H:%M:%S"))
+                logger.info("'" + checking_ttb.shortname + "' timetable was updated at " + update_time)
 
-    # Connect to  the times db
-    conn_times_db = sqlite3.connect(times_db)
-    cursor_times_db = conn_times_db.cursor()
+                # Get list of users who enabled notifications for this timetable
+                self.notificationsdb.connect()
+                users_to_notify = self.notificationsdb.get_notified_users(checking_ttb.shortname)
+                self.notificationsdb.close()
 
-    # Check each ttb for updates (see this list in 'static.py')
-    for checking_ttb in all_timetables:
+                # Send a notification to each user.
+                for user_id in users_to_notify:
 
-        # Get ttb update time from law.bsu.by
-        update_time = ttb_gettime(checking_ttb).strftime('%d.%m.%Y %H:%M:%S')
+                    try:
+                        self.send_message(user_id, 
+                                          src.messages.notification_text(checking_ttb, dt_update_time),
+                                          src.keyboards.notification_keyboard())
+                    # If user blocked this bot & etc...
+                    except Exception as e:
+                        print(e)
+                        logger.info("can't send '" + checking_ttb.shortname + "' notification to user " + user_id + ", skip")
+                        continue
 
-        # Get old update time from db.
-        cursor_times_db.execute("SELECT time  FROM times WHERE (ttb = ?)", (checking_ttb.shortname,));
-        result = cursor_times_db.fetchall()
-        old_update_time = result[0][0]
-        del(result)
+                    logger.info("'" + checking_ttb.shortname + "' notification was sent to user " + user_id)
 
-        # String dates to datetime objects
-        dt_update_time = datetime.strptime(update_time, '%d.%m.%Y %H:%M:%S')
-        dt_old_update_time = datetime.strptime(old_update_time, '%d.%m.%Y %H:%M:%S')
+                    # A delay to prevent any spam control exceptions
+                    time.sleep(src.static.send_message_interval)
 
+                # Write new update time to the database.
+                self.timesdb.write_time(checking_ttb.shortname, update_time)
 
-        # If the timetable was updated, sends a notification to each user
-        #+ from certain table in 'users.db'
-        if dt_update_time > dt_old_update_time:
+            # A delay to prevent any spam control exceptions
+            time.sleep(src.static.send_message_interval)
 
-            # Log message
-            logger.info("'" + checking_ttb.shortname + "' timetable was updated at " + update_time)
+        # Close 'times.db' until next check.
+        self.timesdb.close()
 
-            # Connect to users db.
-            conn_notifications_db = sqlite3.connect(notifications_db)
-            cursor_notifications_db = conn_notifications_db.cursor()
-
-            cursor_notifications_db.execute('SELECT user_id FROM ' + checking_ttb.shortname)
-            result = cursor_notifications_db.fetchall()
-
-            conn_notifications_db.close()
-
-            # List for users notifed about current timetable updates.
-            users_to_notify = []
-            for i in result:
-                users_to_notify.append(i[0])
-            del(result)
-
-
-            # Send a notification to each user.
-            for user_id in users_to_notify:
-
-                # Log message
-                logger.info("'" + checking_ttb.shortname + "' notification was sent to user " + user_id)
-
-                bot_send_message(user_id, notification_text(user_id, checking_ttb, dt_update_time), ok_keyboard())
-
-                # A delay to prevent flood control exceptions
-                time.sleep(send_message_interval)
-
-
-            # Writing new update time to the database.
-            cursor_times_db.execute("UPDATE times SET time = '" + update_time + "' WHERE (ttb = ?)", (checking_ttb.shortname,));
-            conn_times_db.commit()
-
-        # A delay to prevent flood control exceptions
-        time.sleep(next_timetable_interval)
-
-    # Close 'times.db' until next check.
-    conn_times_db.close()
-
-
-"""
-# Add a sheduler
-scheduler = BackgroundScheduler()
-# Time job for notifications Set_updates_interval from 'static.py'
-scheduler.add_job(func=notifications_check, trigger="interval", seconds=check_updates_interval)
-# Start the job
-scheduler.start()
-# Shut down the scheduler when exiting the app
-atexit.register(lambda: scheduler.shutdown())
-"""
 
 bot = LFTableBot()
 

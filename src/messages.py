@@ -55,10 +55,10 @@ def notification_disabled_text(ttb):
     return(text)
 
 
-def notification_text(user_id, ttb, update_time):
-    text = '🔔 Обновлено расписание "' + ttb.name + '" 🔔' + '\n'
+def notification_text(timetable, update_time):
+    text = '🔔 Обновлено расписание "' + timetable.name + '" 🔔' + '\n'
     text += 'Дата обновления: ' + update_time.strftime('%d.%m.%Y') + '\n'
     text += 'Время обновления: ' + update_time.strftime('%H:%M') + '\n'
-    text += '⬇️ Скачать: ' + ttb.url + '\n\n'
+    text += '⬇️ Скачать: ' + timetable.url + '\n\n'
 
     return(text)

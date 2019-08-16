@@ -19,7 +19,6 @@ log_dir = 'log/'
 # Intervals for update checks and notifications(s).
 check_updates_interval = 120
 send_message_interval = 2
-next_timetable_interval = 3
 
 # All types of timetables
 pravo_c1 = TTBS()

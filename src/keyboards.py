@@ -115,7 +115,16 @@ def download_keyboard():
 
     return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
 
+def notification_keyboard():
+    back_button = create_button('⬅ В меню', 'main_menu', 'green')
 
+    keyboard = {
+    "one_time": True,
+    "buttons": [[back_button]]
+
+    }
+
+    return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
 
 
 def start_keyboard():
