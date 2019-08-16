@@ -15,7 +15,6 @@ def main_menu_text():
 
 
 def download_text():
-    #text = 'Ссылки для загрузки файлов с расписаниями.\n\n'
     text = ''
 
     for ttb in src.static.all_timetables:
@@ -29,7 +28,6 @@ def download_text():
 
 
 def start_text():
-    # Send invitation
     text = '🗓 VK-LFTable v' + src.static.lftable_version + ': быстрый доступ к расписанию занятий юридического факультета БГУ.\n'
     text += "⌨️ Нажимте кнопку 'Start', чтобы начать работу.\n\n"
 
@@ -62,7 +60,5 @@ def notification_text(user_id, ttb, update_time):
     text += 'Дата обновления: ' + update_time.strftime('%d.%m.%Y') + '\n'
     text += 'Время обновления: ' + update_time.strftime('%H:%M') + '\n'
     text += '⬇️ Скачать: ' + ttb.url + '\n\n'
-
-    #text += missing_keyboard_warning
 
     return(text)

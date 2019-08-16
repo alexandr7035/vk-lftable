@@ -2,32 +2,22 @@
 
 import os
 import sys
-# Add src/' directory with local modules to path
-sys.path.append('src')
-
-
-import flask
-from flask import Flask, request, json
-import vk
-
 import time
-
 import sqlite3
+import atexit
 from datetime import datetime
 
-# See this files to understand how everything works.
+import vk
+import flask
+from flask import Flask, request, json
+from apscheduler.schedulers.background import BackgroundScheduler
+
+# See 'src/' directory
 import src.static
 import src.messages
 import src.keyboards
 import src.db_classes
 from lftable_logger import *
-
-# For time jobs (especially for sending notifications)
-import atexit
-from apscheduler.schedulers.background import BackgroundScheduler
-
-# Necessary for gunicorn wsgi
-from werkzeug.contrib.fixers import ProxyFix
 
 
 # Tokens
@@ -270,30 +260,6 @@ def notifications_check():
     conn_times_db.close()
 
 
-
-
-# The main part. Event handler based on flask
-app = flask.Flask(__name__)
-
-@app.route('/', methods=['POST'])
-def main_handler():
-    
-    return(bot.handle_request(request))
-
-####################### Main ##################################
-
-# Log message
-logger.info("the program was STARTED now")
-
-# Prepare project structure after the first run
-#first_run_check()
-# Write times in the db in order to prevent late notifications
-#db_set_times_after_run()
-
-# VK
-#session = vk.Session()
-#api = vk.API(session, v=vk_api_version)
-
 """
 # Add a sheduler
 scheduler = BackgroundScheduler()
@@ -311,6 +277,16 @@ app.wsgi_app = ProxyFix(app.wsgi_app)
 
 
 if __name__ == '__main__':
+    
+    app = flask.Flask(__name__)
+
+    @app.route('/', methods=['POST'])
+    def main_handler():
+        return(bot.handle_request(request))
+    
+    # Log message
+    logger.info("the program was STARTED now")
+    
     bot = LFTableBot()
     app.run(host='127.0.0.1', port=5080, use_reloader=False)
     
