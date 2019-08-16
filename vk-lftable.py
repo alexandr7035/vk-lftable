@@ -16,12 +16,11 @@ import sqlite3
 from datetime import datetime
 
 # See this files to understand how everything works.
-from static import *
-from backend import *
-from messages import *
-from keyboards import *
-from lftable_logger import *
+import src.static
+import src.messages
+import src.keyboards
 import src.db_classes
+from lftable_logger import *
 
 # For time jobs (especially for sending notifications)
 import atexit
@@ -60,7 +59,7 @@ class LFTableBot():
     def __init__(self):
         # VK
         session = vk.Session()
-        self.api = vk.API(session, v=vk_api_version)
+        self.api = vk.API(session, v=src.static.vk_api_version)
         
         # Objects to access the databases
         self.timesdb = src.db_classes.TimesDB()
@@ -105,7 +104,9 @@ class LFTableBot():
                 # Usual message was sent
                 else:
                     print('receive usual message')
-                    self.send_message(user_id, main_menu_text(), main_keyboard())
+                    self.send_message(user_id, 
+                                     src.messages.main_menu_text(), 
+                                     src.keyboards.main_keyboard())
                     
             else:
                 if data['object'].get('payload'):
@@ -113,9 +114,13 @@ class LFTableBot():
                     if callback == 'start':
                         # Add user to clients db
                         self.clientsdb.add_client(user_id)
-                        self.send_message(user_id, main_menu_text(), main_keyboard())                      
+                        self.send_message(user_id, 
+                                          src.messages.main_menu_text(), 
+                                          src.keyboards.main_keyboard())                      
                 else:
-                    self.send_message(user_id, start_text(), start_keyboard())
+                    self.send_message(user_id, 
+                                      src.messages.start_text(), 
+                                      src.keyboards.start_keyboard())
             
             self.clientsdb.close()
                 
@@ -126,18 +131,24 @@ class LFTableBot():
         print('CALLBACK')
         
         if callback == 'main_menu':
-            self.send_message(user_id, main_menu_text(), main_keyboard())
+            self.send_message(user_id, src.messages.main_menu_text(), src.keyboards.main_keyboard())
         
         if callback == 'download':
-            self.send_message(user_id, download_text(), download_keyboard())
+            self.send_message(user_id, src.messages.download_text(), src.keyboards.download_keyboard())
             
         if callback in ['pravo_menu', 'ek_polit_menu', 'mag_menu']:
             if callback == 'pravo_menu':
-                self.send_message(user_id, main_menu_text(), pravo_keyboard(user_id))
+                self.send_message(user_id, 
+                                  src.messages.main_menu_text(), 
+                                  src.keyboards.pravo_keyboard(user_id))
             elif callback == 'ek_polit_menu':
-                self.send_message(user_id, main_menu_text(), ek_polit_keyboard(user_id))
+                self.send_message(user_id, 
+                                  src.messages.main_menu_text(), 
+                                  src.keyboards.ek_polit_keyboard(user_id))
             elif callback == 'mag_menu':
-                self.send_message(user_id, main_menu_text(), mag_keyboard(user_id))
+                self.send_message(user_id, 
+                                  src.messages.main_menu_text(), 
+                                  src.keyboards.mag_keyboard(user_id))
         
         if  callback in ['pravo_c1', 'pravo_c2', 'pravo_c3', 'pravo_c4',
                           'ek_polit_c1', 'ek_polit_c2', 'ek_polit_c3', 'ek_polit_c4',
@@ -148,28 +159,37 @@ class LFTableBot():
             self.notificationsdb.connect()
             if self.notificationsdb.check_if_user_notified(user_id, timetable.shortname) is True:
                 self.notificationsdb.disable_notifications(user_id, timetable.shortname)
-                self.send_message(user_id, notification_disabled_text(timetable))
+                self.send_message(user_id, src.messages.notification_disabled_text(timetable))
             else:
                 self.notificationsdb.enable_notifications(user_id, timetable.shortname)
-                self.send_message(user_id, notification_enabled_text(timetable))
+                self.send_message(user_id, src.messages.notification_enabled_text(timetable))
             self.notificationsdb.close()
                 
             if callback in ['pravo_c1', 'pravo_c2', 'pravo_c3', 'pravo_c4']:
-                self.send_message(user_id, main_menu_text(), pravo_keyboard(user_id))
+                self.send_message(user_id, 
+                                  src.messages.main_menu_text(), 
+                                  src.keyboards.pravo_keyboard(user_id))
             elif callback in ['ek_polit_c1', 'ek_polit_c2', 'ek_polit_c3', 'ek_polit_c4']:
-                self.send_message(user_id, main_menu_text(), ek_polit_keyboard(user_id))
+                self.send_message(user_id, 
+                                  src.messages.main_menu_text(), 
+                                  src.keyboards.ek_polit_keyboard(user_id))
             elif callback in ['mag_c1', 'mag_c2']:
-                self.send_message(user_id, main_menu_text(), mag_keyboard(user_id))
+                self.send_message(user_id, 
+                                  src.messages.main_menu_text(), 
+                                  src.keyboards.mag_keyboard(user_id))
                 
                 
         if callback == 'stop':
             self.clientsdb.connect()
             self.clientsdb.remove_client(user_id)
-            self.send_message(user_id, stop_text())
+            self.send_message(user_id, src.messages.stop_text())
             
     
     def send_message(self, user_id, text, keyboard=None):
-        self.api.messages.send(access_token=vk_token, user_id=user_id, message=text, keyboard=keyboard)
+        self.api.messages.send(access_token=vk_token, 
+                              user_id=user_id, 
+                              message=text, 
+                              keyboard=keyboard)
 
         
 
@@ -271,8 +291,8 @@ logger.info("the program was STARTED now")
 #db_set_times_after_run()
 
 # VK
-session = vk.Session()
-api = vk.API(session, v=vk_api_version)
+#session = vk.Session()
+#api = vk.API(session, v=vk_api_version)
 
 """
 # Add a sheduler

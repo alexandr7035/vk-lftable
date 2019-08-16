@@ -1,8 +1,5 @@
-################################### Keyboards ##########################
-from flask import json
-
 import sqlite3
-from backend import *
+from flask import json
 import src.static
 import src.db_classes
 
