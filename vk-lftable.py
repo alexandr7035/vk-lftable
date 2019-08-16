@@ -133,11 +133,11 @@ class LFTableBot():
             
         if callback in ['pravo_menu', 'ek_polit_menu', 'mag_menu']:
             if callback == 'pravo_menu':
-                self.send_message(user_id, main_menu_text(), pravo_keyboard())
+                self.send_message(user_id, main_menu_text(), pravo_keyboard(user_id))
             elif callback == 'ek_polit_menu':
-                self.send_message(user_id, main_menu_text(), ek_polit_keyboard())
+                self.send_message(user_id, main_menu_text(), ek_polit_keyboard(user_id))
             elif callback == 'mag_menu':
-                self.send_message(user_id, main_menu_text(), mag_keyboard())
+                self.send_message(user_id, main_menu_text(), mag_keyboard(user_id))
         
         if  callback in ['pravo_c1', 'pravo_c2', 'pravo_c3', 'pravo_c4',
                           'ek_polit_c1', 'ek_polit_c2', 'ek_polit_c3', 'ek_polit_c4',
@@ -155,11 +155,11 @@ class LFTableBot():
             self.notificationsdb.close()
                 
             if callback in ['pravo_c1', 'pravo_c2', 'pravo_c3', 'pravo_c4']:
-                self.send_message(user_id, main_menu_text(), pravo_keyboard())
+                self.send_message(user_id, main_menu_text(), pravo_keyboard(user_id))
             elif callback in ['ek_polit_c1', 'ek_polit_c2', 'ek_polit_c3', 'ek_polit_c4']:
-                self.send_message(user_id, main_menu_text(), ek_polit_keyboard())
+                self.send_message(user_id, main_menu_text(), ek_polit_keyboard(user_id))
             elif callback in ['mag_c1', 'mag_c2']:
-                self.send_message(user_id, main_menu_text(), mag_keyboard())
+                self.send_message(user_id, main_menu_text(), mag_keyboard(user_id))
                 
                 
         if callback == 'stop':

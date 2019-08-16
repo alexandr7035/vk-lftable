@@ -4,6 +4,8 @@ from flask import json
 import sqlite3
 from backend import *
 from static import *
+import src.db_classes
+
 
 # Function to create a button
 def create_button(button_text, button_callback, color='green'):
@@ -22,6 +24,19 @@ def create_button(button_text, button_callback, color='green'):
         }
 
     return(button)
+    
+def create_timetable_button(text, callback, user_id):
+    notificationsdb = src.db_classes.NotificationsDB()
+    notificationsdb.connect()
+    
+    timetable_shortname = callback
+    
+    if notificationsdb.check_if_user_notified(user_id, timetable_shortname) is not True:
+        return(create_button(text + ' 🔔', callback))
+    else:
+        return(create_button(text + ' 🔕', callback, 'red'))
+    
+
 
 def main_keyboard():
     pravo_btn = create_button('📌 Правоведение', 'pravo_menu', 'green')
@@ -43,18 +58,15 @@ def main_keyboard():
 
 
 
-def pravo_keyboard():
-    pravo_c1_btn = create_button('Правоведение - 1⃣', pravo_c1.shortname)
-    pravo_c2_btn = create_button('Правоведение - 2⃣', pravo_c2.shortname)
-    pravo_c3_btn = create_button('Правоведение - 3⃣', pravo_c3.shortname)
-    pravo_c4_btn = create_button('Правоведение - 4⃣', pravo_c4.shortname)
+def pravo_keyboard(user_id):
+    pravo_c1_btn = create_timetable_button('Правоведение - 1⃣', pravo_c1.shortname, user_id)
+    pravo_c2_btn = create_timetable_button('Правоведение - 2⃣', pravo_c2.shortname, user_id)
+    pravo_c3_btn = create_timetable_button('Правоведение - 3⃣', pravo_c3.shortname, user_id)
+    pravo_c4_btn = create_timetable_button('Правоведение - 4⃣', pravo_c4.shortname, user_id)
     back_button = create_button('⬅️ Назад', 'main_menu', 'green')
     
-    for btn, timetable in zip([pravo_c1_btn, pravo_c2_btn, pravo_c3_btn, pravo_c4_btn],
-                              [pravo_c1, pravo_c2, pravo_c3, pravo_c4]):
-        print(btn, timetable)
-        
-
+    
+    
     keyboard = { 
     "one_time": True,
     "buttons": [[pravo_c1_btn, pravo_c2_btn],
@@ -64,11 +76,11 @@ def pravo_keyboard():
     
     return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
     
-def ek_polit_keyboard():
-    ek_polit_c1_btn = create_button('Эк. и полит. - 1⃣', ek_polit_c1.shortname, 'green')
-    ek_polit_c2_btn = create_button('Эк. и полит. - 2⃣', ek_polit_c2.shortname, 'green')
-    ek_polit_c3_btn = create_button('Эк. и полит. - 3⃣', ek_polit_c3.shortname, 'green')
-    ek_polit_c4_btn = create_button('Эк. и полит. - 4⃣', ek_polit_c4.shortname, 'green')
+def ek_polit_keyboard(user_id):
+    ek_polit_c1_btn = create_timetable_button('Эк. и полит. - 1⃣', ek_polit_c1.shortname, user_id)
+    ek_polit_c2_btn = create_timetable_button('Эк. и полит. - 2⃣', ek_polit_c2.shortname, user_id)
+    ek_polit_c3_btn = create_timetable_button('Эк. и полит. - 3⃣', ek_polit_c3.shortname, user_id)
+    ek_polit_c4_btn = create_timetable_button('Эк. и полит. - 4⃣', ek_polit_c4.shortname, user_id)
     back_button = create_button('⬅️ Назад', 'main_menu', 'green')
 
     keyboard = { 
@@ -80,9 +92,9 @@ def ek_polit_keyboard():
     
     return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
     
-def mag_keyboard():
-    mag_c1_btn = create_button('Магистратура- 1⃣', mag_c1.shortname, 'green')
-    mag_c2_btn = create_button('Магистратура - 2⃣', mag_c2.shortname, 'green')
+def mag_keyboard(user_id):
+    mag_c1_btn = create_timetable_button('Магистратура- 1⃣', mag_c1.shortname, user_id)
+    mag_c2_btn = create_timetable_button('Магистратура - 2⃣', mag_c2.shortname, user_id)
     back_button = create_button('⬅️ Назад', 'main_menu', 'green')
 
     keyboard = { 
