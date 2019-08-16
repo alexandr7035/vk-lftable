@@ -3,7 +3,7 @@ from flask import json
 
 import sqlite3
 from backend import *
-from static import *
+import src.static
 import src.db_classes
 
 
@@ -59,10 +59,10 @@ def main_keyboard():
 
 
 def pravo_keyboard(user_id):
-    pravo_c1_btn = create_timetable_button('Правоведение - 1⃣', pravo_c1.shortname, user_id)
-    pravo_c2_btn = create_timetable_button('Правоведение - 2⃣', pravo_c2.shortname, user_id)
-    pravo_c3_btn = create_timetable_button('Правоведение - 3⃣', pravo_c3.shortname, user_id)
-    pravo_c4_btn = create_timetable_button('Правоведение - 4⃣', pravo_c4.shortname, user_id)
+    pravo_c1_btn = create_timetable_button('Правоведение - 1⃣', src.static.pravo_c1.shortname, user_id)
+    pravo_c2_btn = create_timetable_button('Правоведение - 2⃣', src.static.pravo_c2.shortname, user_id)
+    pravo_c3_btn = create_timetable_button('Правоведение - 3⃣', src.static.pravo_c3.shortname, user_id)
+    pravo_c4_btn = create_timetable_button('Правоведение - 4⃣', src.static.pravo_c4.shortname, user_id)
     back_button = create_button('⬅️ Назад', 'main_menu', 'green')
     
     
@@ -77,10 +77,10 @@ def pravo_keyboard(user_id):
     return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
     
 def ek_polit_keyboard(user_id):
-    ek_polit_c1_btn = create_timetable_button('Эк. и полит. - 1⃣', ek_polit_c1.shortname, user_id)
-    ek_polit_c2_btn = create_timetable_button('Эк. и полит. - 2⃣', ek_polit_c2.shortname, user_id)
-    ek_polit_c3_btn = create_timetable_button('Эк. и полит. - 3⃣', ek_polit_c3.shortname, user_id)
-    ek_polit_c4_btn = create_timetable_button('Эк. и полит. - 4⃣', ek_polit_c4.shortname, user_id)
+    ek_polit_c1_btn = create_timetable_button('Эк. и полит. - 1⃣', src.static.ek_polit_c1.shortname, user_id)
+    ek_polit_c2_btn = create_timetable_button('Эк. и полит. - 2⃣', src.static.ek_polit_c2.shortname, user_id)
+    ek_polit_c3_btn = create_timetable_button('Эк. и полит. - 3⃣', src.static.ek_polit_c3.shortname, user_id)
+    ek_polit_c4_btn = create_timetable_button('Эк. и полит. - 4⃣', src.static.ek_polit_c4.shortname, user_id)
     back_button = create_button('⬅️ Назад', 'main_menu', 'green')
 
     keyboard = { 
@@ -93,8 +93,8 @@ def ek_polit_keyboard(user_id):
     return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
     
 def mag_keyboard(user_id):
-    mag_c1_btn = create_timetable_button('Магистратура- 1⃣', mag_c1.shortname, user_id)
-    mag_c2_btn = create_timetable_button('Магистратура - 2⃣', mag_c2.shortname, user_id)
+    mag_c1_btn = create_timetable_button('Магистратура- 1⃣', src.static.mag_c1.shortname, user_id)
+    mag_c2_btn = create_timetable_button('Магистратура - 2⃣', src.static.mag_c2.shortname, user_id)
     back_button = create_button('⬅️ Назад', 'main_menu', 'green')
 
     keyboard = { 
