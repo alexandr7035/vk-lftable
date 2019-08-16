@@ -57,6 +57,46 @@ class LFTableBot():
         self.statisticsdb = src.db_classes.StatisticsDB()
         self.clientsdb = src.db_classes.ClientsDB()
         
+        # Create necessary directories and files
+        self.prepare_workspace()
+        
+    def prepare_workspace(self):
+        
+        # Create directory for sqlite3 databases
+        if not os.path.exists(src.static.db_dir):
+            os.mkdir(src.static.db_dir)
+            
+            logger.info("'" + src.static.db_dir + "' directory was created")
+            
+        # Create databases. See db_classes.py
+        if not os.path.isfile(src.static.clientsdb_path):
+            self.clientsdb.connect()
+            self.clientsdb.construct()
+            self.clientsdb.close()
+
+            logger.info("'" + src.static.clientsdb_path + "' database was created")
+
+        if not os.path.isfile(src.static.timesdb_path):
+            self.timesdb.connect()
+            self.timesdb.construct()
+            self.timesdb.close()
+
+            logger.info("'" + src.static.timesdb_path + "' database was created")
+
+        if not os.path.isfile(src.static.notificationsdb_path):
+            self.notificationsdb.connect()
+            self.notificationsdb.construct()
+            self.notificationsdb.close()
+
+            logger.info("'" + src.static.notificationsdb_path + "' database was created")
+
+        if not os.path.isfile(src.static.statisticsdb_path):
+            self.statisticsdb.connect()
+            self.statisticsdb.construct()
+            self.statisticsdb.close()
+
+            logger.info("'" + src.static.statisticsdb_path + "' database was created")
+        
     def handle_request(self, flask_request):
         data = json.loads(flask_request.data)
         print(data)
