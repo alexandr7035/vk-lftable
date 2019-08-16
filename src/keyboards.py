@@ -8,7 +8,7 @@ import src.db_classes
 
 
 # Function to create a button
-def create_button(button_text, button_callback, color='green'):
+def create_button(button_text, button_callback, color=src.static.default_button_color):
     
     colors_dict = {'red':'negative', 
                    'green':'positive'

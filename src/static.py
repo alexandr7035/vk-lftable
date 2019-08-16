@@ -76,3 +76,5 @@ mag_c1.shortname = 'mag_c1'
 mag_c2.url = 'https://law.bsu.by/pub/2/Raspisanie_mag_2_kurs.xls'
 mag_c2.name = 'Магистратура, 2-й курс'
 mag_c2.shortname = 'mag_c2'
+
+default_button_color = 'green'
