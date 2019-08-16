@@ -138,6 +138,29 @@ class LFTableBot():
                 self.send_message(user_id, main_menu_text(), ek_polit_keyboard())
             elif callback == 'mag_menu':
                 self.send_message(user_id, main_menu_text(), mag_keyboard())
+        
+        if  callback in ['pravo_c1', 'pravo_c2', 'pravo_c3', 'pravo_c4',
+                          'ek_polit_c1', 'ek_polit_c2', 'ek_polit_c3', 'ek_polit_c4',
+                        'mag_c1', 'mag_c2']:
+            
+            timetable = getattr(src.static, callback)                
+            
+            self.notificationsdb.connect()
+            if self.notificationsdb.check_if_user_notified(user_id, timetable.shortname) is True:
+                self.notificationsdb.disable_notifications(user_id, timetable.shortname)
+                self.send_message(user_id, notification_disabled_text(timetable))
+            else:
+                self.notificationsdb.enable_notifications(user_id, timetable.shortname)
+                self.send_message(user_id, notification_enabled_text(timetable))
+            self.notificationsdb.close()
+                
+            if callback in ['pravo_c1', 'pravo_c2', 'pravo_c3', 'pravo_c4']:
+                self.send_message(user_id, main_menu_text(), pravo_keyboard())
+            elif callback in ['ek_polit_c1', 'ek_polit_c2', 'ek_polit_c3', 'ek_polit_c4']:
+                self.send_message(user_id, main_menu_text(), ek_polit_keyboard())
+            elif callback in ['mag_c1', 'mag_c2']:
+                self.send_message(user_id, main_menu_text(), mag_keyboard())
+                
                 
         if callback == 'stop':
             self.clientsdb.connect()
