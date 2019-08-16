@@ -60,6 +60,15 @@ class LFTableBot():
         # Create necessary directories and files
         self.prepare_workspace()
         
+        # Sets times to the 'times.db' immediately after the run WITHOUT notifiying users
+        # This is to prevent late notifications if the bot was down for a long time
+        self.timesdb.connect()
+        for timetable in src.static.all_timetables:
+            update_time = src.gettime.ttb_gettime(timetable).strftime('%d.%m.%Y %H:%M:%S')
+            self.timesdb.write_time(timetable.shortname, update_time)
+        self.timesdb.close()
+        
+        
     def prepare_workspace(self):
         
         # Create directory for sqlite3 databases
