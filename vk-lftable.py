@@ -129,16 +129,18 @@ class LFTableBot():
 
         # If got message from user
         elif data['type'] == 'message_new':
+            
+            # Get user id
+            user_id = str(data['object']['from_id'])
 
             # Prevent answers to old requests if bot was down
             request_time = data['object']['date']
             requeste = data['object']['date']
             if request_time <= round(time.time()) - 5:
-                print('skip request')
+                logger.info("skipped request: user_id=" + user_id + ", time=" + str(request_time))
                 return('ok')
 
-            # Get user id
-            user_id = str(data['object']['from_id'])
+
 
 
             self.clientsdb.connect()
