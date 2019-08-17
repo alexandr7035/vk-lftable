@@ -139,7 +139,6 @@ class LFTableBot():
 
             # Get user id
             user_id = str(data['object']['from_id'])
-            print(user_id)
 
 
             self.clientsdb.connect()
@@ -152,7 +151,6 @@ class LFTableBot():
                     self.handle_button_callback(user_id, callback)
                 # Usual message was sent
                 else:
-                    print('receive usual message')
                     self.send_message(user_id,
                                      src.messages.main_menu_text(),
                                      src.keyboards.main_keyboard())
@@ -177,7 +175,6 @@ class LFTableBot():
         return 'ok'
 
     def handle_button_callback(self, user_id, callback):
-        print('CALLBACK')
 
         if callback == 'main_menu':
             self.send_message(user_id, src.messages.main_menu_text(), src.keyboards.main_keyboard())
@@ -287,7 +284,6 @@ class LFTableBot():
                                           src.keyboards.notification_keyboard())
                     # If user blocked this bot & etc...
                     except Exception as e:
-                        print(e)
                         logger.info("can't send '" + checking_ttb.shortname + "' notification to user " + user_id + ", skip")
                         continue
 
