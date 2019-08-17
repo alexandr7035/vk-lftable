@@ -44,13 +44,13 @@ def stop_text():
 
 
 def notification_enabled_text(ttb):
-    text = '🕑🔔 Включены уведомления для расписания "' + ttb.name + '".'
+    text = '🔔 Включены уведомления для расписания "' + ttb.name + '".'
 
     return(text)
 
 
 def notification_disabled_text(ttb):
-    text = '🕑🔕 Отключены уведомления для расписания "' + ttb.name + '".'
+    text = '🔕 Отключены уведомления для расписания "' + ttb.name + '".'
 
     return(text)
 
