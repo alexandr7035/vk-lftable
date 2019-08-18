@@ -159,19 +159,17 @@ class LFTableBot():
                                      src.keyboards.main_keyboard())
 
             else:
-                if data['object'].get('payload'):
-                    callback = json.loads(data['object']['payload'])['button']
-                    if callback == 'start':
-                        # Add user to clients db
-                        self.clientsdb.add_client(user_id)
-                        self.send_message(user_id,
-                                          src.messages.main_menu_text(),
-                                          src.keyboards.main_keyboard())
-                        # Add used id to statistics.db/uniq_users table 
-                        self.statisticsdb.connect()
-                        if user_id not in self.statisticsdb.get_unique_users():
-                            self.statisticsdb.add_unique_user(user_id)
-                        self.statisticsdb.close()
+                if data['object'].get('payload') and json.loads(data['object']['payload'])['button'] == 'start':
+                    # Add user to clients db
+                    self.clientsdb.add_client(user_id)
+                    self.send_message(user_id,
+                                      src.messages.main_menu_text(),
+                                      src.keyboards.main_keyboard())
+                    # Add used id to statistics.db/uniq_users table 
+                    self.statisticsdb.connect()
+                    if user_id not in self.statisticsdb.get_unique_users():
+                        self.statisticsdb.add_unique_user(user_id)
+                    self.statisticsdb.close()
 
                 else:
                     self.send_message(user_id,
