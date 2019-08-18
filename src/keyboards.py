@@ -37,7 +37,7 @@ def main_keyboard():
     mag_btn  = create_button('📌 Магистратура', 'mag_menu')
     
     download_btn = create_button('⬇️ Скачать', 'download')
-    stop_btn = create_button('Отключить ❌', 'stop')
+    stop_btn = create_button('Отключить 🚫', 'stop')
     
     keyboard = {
     "one_time": True,
