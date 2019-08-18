@@ -1,5 +1,5 @@
 # Version number
-lftable_version = '2.1'
+lftable_version = '3.0'
 
 # Class for storing timetable's options.
 class TTBS():
