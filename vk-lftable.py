@@ -133,6 +133,7 @@ class LFTableBot():
             # Get user id
             user_id = str(data['object']['from_id'])
 
+            
             # Prevent answers to old requests if bot was down
             request_time = data['object']['date']
             requeste = data['object']['date']
@@ -166,6 +167,12 @@ class LFTableBot():
                         self.send_message(user_id,
                                           src.messages.main_menu_text(),
                                           src.keyboards.main_keyboard())
+                        # Add used id to statistics.db/uniq_users table 
+                        self.statisticsdb.connect()
+                        if user_id not in self.statisticsdb.get_unique_users():
+                            self.statisticsdb.add_unique_user(user_id)
+                        self.statisticsdb.close()
+
                 else:
                     self.send_message(user_id,
                                       src.messages.start_text(),

@@ -151,6 +151,6 @@ class StatisticsDB(CommonDB):
         return(unique_users)
 
     # Add a new user to this database (when '/start' command is sent)
-    def add_uniq_user(self, user_id):
+    def add_unique_user(self, user_id):
         self.cursor.execute('INSERT INTO uniq_users VALUES (?)', (user_id,))
         self.connection.commit()
