@@ -155,7 +155,7 @@ class LFTableBot():
                 # Usual message was sent
                 else:
                     self.send_message(user_id,
-                                     src.messages.main_menu_text(),
+                                     src.messages.main_text(),
                                      src.keyboards.main_keyboard())
 
             else:
@@ -163,7 +163,7 @@ class LFTableBot():
                     # Add user to clients db
                     self.clientsdb.add_client(user_id)
                     self.send_message(user_id,
-                                      src.messages.main_menu_text(),
+                                      src.messages.main_text(),
                                       src.keyboards.main_keyboard())
                     # Add used id to statistics.db/uniq_users table 
                     self.statisticsdb.connect()
@@ -184,7 +184,7 @@ class LFTableBot():
     def handle_button_callback(self, user_id, callback):
 
         if callback == 'main_menu':
-            self.send_message(user_id, src.messages.main_menu_text(), src.keyboards.main_keyboard())
+            self.send_message(user_id, src.messages.main_text(), src.keyboards.main_keyboard())
 
         if callback == 'download':
             self.send_message(user_id, src.messages.download_text(), src.keyboards.download_keyboard())
@@ -192,15 +192,15 @@ class LFTableBot():
         if callback in ['pravo_menu', 'ek_polit_menu', 'mag_menu']:
             if callback == 'pravo_menu':
                 self.send_message(user_id,
-                                  src.messages.main_menu_text(),
+                                  src.messages.main_text(),
                                   src.keyboards.pravo_keyboard(user_id))
             elif callback == 'ek_polit_menu':
                 self.send_message(user_id,
-                                  src.messages.main_menu_text(),
+                                  src.messages.main_text(),
                                   src.keyboards.ek_polit_keyboard(user_id))
             elif callback == 'mag_menu':
                 self.send_message(user_id,
-                                  src.messages.main_menu_text(),
+                                  src.messages.main_text(),
                                   src.keyboards.mag_keyboard(user_id))
 
         if  callback in ['pravo_c1', 'pravo_c2', 'pravo_c3', 'pravo_c4',
@@ -220,15 +220,15 @@ class LFTableBot():
 
             if callback in ['pravo_c1', 'pravo_c2', 'pravo_c3', 'pravo_c4']:
                 self.send_message(user_id,
-                                  src.messages.main_menu_text(),
+                                  src.messages.main_text(),
                                   src.keyboards.pravo_keyboard(user_id))
             elif callback in ['ek_polit_c1', 'ek_polit_c2', 'ek_polit_c3', 'ek_polit_c4']:
                 self.send_message(user_id,
-                                  src.messages.main_menu_text(),
+                                  src.messages.main_text(),
                                   src.keyboards.ek_polit_keyboard(user_id))
             elif callback in ['mag_c1', 'mag_c2']:
                 self.send_message(user_id,
-                                  src.messages.main_menu_text(),
+                                  src.messages.main_text(),
                                   src.keyboards.mag_keyboard(user_id))
 
 

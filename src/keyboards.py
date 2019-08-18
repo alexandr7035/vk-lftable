@@ -101,7 +101,7 @@ def mag_keyboard(user_id):
 
 def download_keyboard():
 
-    back_button = create_button('Назад', 'main_menu')
+    back_button = create_button('⬅ Назад', 'main_menu')
 
     keyboard = {
     "one_time": True,
