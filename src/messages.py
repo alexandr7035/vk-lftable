@@ -7,7 +7,7 @@ import src.gettime
 missing_keyboard_warning = '⚠ Если Вы не видите клавиатуру, попробуйте использовать браузерную версию VK (https://vk.com).'
 
 def main_text():
-    text = '🗓🛠 Выберите нужное действие.\n'
+    text = '🗓 Выберите нужное действие.\n'
 
     text += missing_keyboard_warning
 
@@ -20,7 +20,7 @@ def download_text():
     for ttb in src.static.all_timetables:
 
         text += '⬇️ "' + ttb.name + '" - ' + ttb.url + ' - ' + src.gettime.ttb_gettime(ttb).strftime('%d.%m.%Y %H:%M') + '\n'
-        time.sleep(0.2)
+        time.sleep(src.static.download_interval)
 
     text += '\n' + missing_keyboard_warning
 

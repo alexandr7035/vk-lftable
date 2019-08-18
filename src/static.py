@@ -20,6 +20,9 @@ log_dir = 'log/'
 check_updates_interval = 120
 send_message_interval = 2
 
+# For download buttom to prevent spam control
+download_interval = 0.01
+
 # All types of timetables
 pravo_c1 = TTBS()
 pravo_c2 = TTBS()
