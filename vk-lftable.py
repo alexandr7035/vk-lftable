@@ -288,15 +288,16 @@ class LFTableBot():
                             self.send_message(user_id,
                                             src.messages.notification_text(checking_ttb, dt_update_time),
                                             src.keyboards.notification_keyboard())
+                            logger.info("'" + checking_ttb.shortname + "' notification was sent to user " + user_id)
                         # If user blocked this bot & etc...
                         except Exception as e:
                             logger.info("can't send '" + checking_ttb.shortname + "' notification to user " + user_id + ", skip")
                             continue
                             
                     else:
-                        logger.info("user " + user_id + " is not active now, skip " + checking_ttb.shortname + " notification")
+                        logger.info("user " + user_id + " is not active now, skip '" + checking_ttb.shortname + "' notification")
 
-                    logger.info("'" + checking_ttb.shortname + "' notification was sent to user " + user_id)
+
 
                     # A delay to prevent any spam control exceptions
                     time.sleep(src.static.send_message_interval)
