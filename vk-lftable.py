@@ -234,13 +234,9 @@ class LFTableBot():
 
         if callback == 'stop':
 
-            self.notificationsdb.connect()
-            for timetable in src.static.all_timetables:
-                if self.notificationsdb.check_if_user_notified(user_id, timetable.shortname):
-                    self.notificationsdb.disable_notifications(user_id, timetable.shortname)
-
             self.clientsdb.connect()
             self.clientsdb.remove_client(user_id)
+            self.clientsdb.close()
             self.send_message(user_id, src.messages.stop_text())
 
 
@@ -284,15 +280,21 @@ class LFTableBot():
 
                 # Send a notification to each user.
                 for user_id in users_to_notify:
+                    
+                    self.clientsdb.connect()
+                    if self.clientsdb.check_if_user_is_client(user_id) is True:
 
-                    try:
-                        self.send_message(user_id,
-                                          src.messages.notification_text(checking_ttb, dt_update_time),
-                                          src.keyboards.notification_keyboard())
-                    # If user blocked this bot & etc...
-                    except Exception as e:
-                        logger.info("can't send '" + checking_ttb.shortname + "' notification to user " + user_id + ", skip")
-                        continue
+                        try:
+                            self.send_message(user_id,
+                                            src.messages.notification_text(checking_ttb, dt_update_time),
+                                            src.keyboards.notification_keyboard())
+                        # If user blocked this bot & etc...
+                        except Exception as e:
+                            logger.info("can't send '" + checking_ttb.shortname + "' notification to user " + user_id + ", skip")
+                            continue
+                            
+                    else:
+                        logger.info("user " + user_id + " is not active now, skip " + checking_ttb.shortname + " notification")
 
                     logger.info("'" + checking_ttb.shortname + "' notification was sent to user " + user_id)
 
