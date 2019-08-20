@@ -55,7 +55,6 @@ class LFTableBot():
         self.timesdb = src.db_classes.TimesDB()
         self.notificationsdb = src.db_classes.NotificationsDB()
         self.statisticsdb = src.db_classes.StatisticsDB()
-        self.clientsdb = src.db_classes.ClientsDB()
 
         # Create necessary directories and files
         self.prepare_workspace()
@@ -168,7 +167,7 @@ class LFTableBot():
                                       src.messages.start_text(),
                                       src.keyboards.start_keyboard())
 
-            #self.statisticsdb.close()
+            self.statisticsdb.close()
 
 
         return 'ok'
@@ -225,10 +224,7 @@ class LFTableBot():
 
 
         if callback == 'stop':
-
-            self.statisticsdb.connect()
             self.statisticsdb.remove_active_user(user_id)
-            self.statisticsdb.close()
             self.send_message(user_id, src.messages.stop_text())
 
 
