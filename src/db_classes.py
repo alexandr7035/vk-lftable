@@ -26,7 +26,7 @@ class TimesDB(CommonDB):
 
     # Creates necessary tables after db was created
     def construct(self):
-        self.cursor.execute('CREATE TABLE times (ttb, time)')
+        self.cursor.execute('CREATE TABLE times (timetable, update_time)')
 
         for timetable in src.static.all_timetables:
             self.cursor.execute('INSERT INTO times VALUES ("' + timetable.shortname + '", "")')
@@ -35,13 +35,13 @@ class TimesDB(CommonDB):
 
     # Get timetable's update time written before
     def get_time(self, timetable_name):
-        self.cursor.execute("SELECT time FROM times WHERE (ttb = ?)", (timetable_name,))
+        self.cursor.execute("SELECT update_time FROM times WHERE (timetable = ?)", (timetable_name,))
         time = self.cursor.fetchall()[0][0]
         return(time)
 
     # Write a new update time to the db
     def write_time(self, timetable_name, update_time):
-        self.cursor.execute("UPDATE times SET time = '" + update_time + "' WHERE (ttb = ?)", (timetable_name,))
+        self.cursor.execute("UPDATE times SET update_time = '" + update_time + "' WHERE (timetable = ?)", (timetable_name,))
         self.connection.commit()
 
 
