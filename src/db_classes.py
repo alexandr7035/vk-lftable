@@ -136,7 +136,14 @@ class StatisticsDB(CommonDB):
 
     # Creates necessary tables after db was created
     def construct(self):
-        self.cursor.execute('CREATE TABLE uniq_users (users)')
+        self.cursor.execute('CREATE TABLE uniq_users (users)')        
+        self.cursor.execute('CREATE TABLE active_users (user_id)')
+        self.connection.commit()    
+    
+        
+    # Add a new user to this database (when '/start' command is sent)
+    def add_unique_user(self, user_id):
+        self.cursor.execute('INSERT INTO uniq_users VALUES (?)', (user_id,))
         self.connection.commit()
 
     # Returns list of unique users
@@ -150,7 +157,32 @@ class StatisticsDB(CommonDB):
 
         return(unique_users)
 
-    # Add a new user to this database (when '/start' command is sent)
-    def add_unique_user(self, user_id):
-        self.cursor.execute('INSERT INTO uniq_users VALUES (?)', (user_id,))
+    # Returns list of active users
+    def get_active_users(self):
+        self.cursor.execute('SELECT * FROM active_users')
+        result = self.cursor.fetchall()
+
+        clients = []
+        for i in result:
+            clients.append(i[0])
+
+        return(clients)
+
+    # Add a new user to active_users table (when '/start' command is sent)
+    def add_active_user(self, user_id):
+        self.cursor.execute('INSERT INTO active_users VALUES (?)', (user_id,))
         self.connection.commit()
+
+    def remove_active_user(self, user_id):
+        self.cursor.execute('DELETE FROM active_users WHERE (user_id = "' + user_id + '")')
+        self.connection.commit()
+
+    def check_if_user_is_active(self, user_id):
+
+        clients = self.get_active_users()
+
+        if user_id in clients:
+            return True
+        else:
+            return False
+

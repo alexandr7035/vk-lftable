@@ -87,14 +87,7 @@ class LFTableBot():
 
             logger.info("'" + src.static.db_dir + "' directory was created")
 
-        # Create databases. See db_classes.py
-        if not os.path.isfile(src.static.clientsdb_path):
-            self.clientsdb.connect()
-            self.clientsdb.construct()
-            self.clientsdb.close()
-
-            logger.info("'" + src.static.clientsdb_path + "' database was created")
-
+        # Create databases. See db_classes.py (especially 'construct()' methods)
         if not os.path.isfile(src.static.timesdb_path):
             self.timesdb.connect()
             self.timesdb.construct()
@@ -129,11 +122,11 @@ class LFTableBot():
 
         # If got message from user
         elif data['type'] == 'message_new':
-            
+
             # Get user id
             user_id = str(data['object']['from_id'])
 
-            
+
             # Prevent answers to old requests if bot was down
             request_time = data['object']['date']
             requeste = data['object']['date']
@@ -144,9 +137,9 @@ class LFTableBot():
 
 
 
-            self.clientsdb.connect()
+            self.statisticsdb.connect()
 
-            if self.clientsdb.check_if_user_is_client(user_id) is True:
+            if self.statisticsdb.check_if_user_is_active(user_id) is True:
 
                 # That means a button was pressed
                 if data['object'].get('payload'):
@@ -161,12 +154,12 @@ class LFTableBot():
             else:
                 if data['object'].get('payload') and json.loads(data['object']['payload'])['button'] == 'start':
                     # Add user to clients db
-                    self.clientsdb.add_client(user_id)
+                    self.statisticsdb.add_active_user(user_id)
                     self.send_message(user_id,
                                       src.messages.main_text(),
                                       src.keyboards.main_keyboard())
-                    # Add used id to statistics.db/uniq_users table 
-                    self.statisticsdb.connect()
+
+                    # Add used id to statistics.db/uniq_users table
                     if user_id not in self.statisticsdb.get_unique_users():
                         self.statisticsdb.add_unique_user(user_id)
                     self.statisticsdb.close()
@@ -176,7 +169,7 @@ class LFTableBot():
                                       src.messages.start_text(),
                                       src.keyboards.start_keyboard())
 
-            self.clientsdb.close()
+            self.statisticsdb.close()
 
 
         return 'ok'
@@ -234,9 +227,9 @@ class LFTableBot():
 
         if callback == 'stop':
 
-            self.clientsdb.connect()
-            self.clientsdb.remove_client(user_id)
-            self.clientsdb.close()
+            self.statisticsdb.connect()
+            self.statisticsdb.remove_active_user(user_id)
+            self.statisticsdb.close()
             self.send_message(user_id, src.messages.stop_text())
 
 
@@ -280,9 +273,9 @@ class LFTableBot():
 
                 # Send a notification to each user.
                 for user_id in users_to_notify:
-                    
-                    self.clientsdb.connect()
-                    if self.clientsdb.check_if_user_is_client(user_id) is True:
+
+                    self.statisticsdb.connect()
+                    if self.statisticsdb.check_if_user_is_active(user_id) is True:
 
                         try:
                             self.send_message(user_id,
@@ -293,10 +286,11 @@ class LFTableBot():
                         except Exception as e:
                             logger.info("can't send '" + checking_ttb.shortname + "' notification to user " + user_id + ", skip")
                             continue
-                            
+
                     else:
                         logger.info("user " + user_id + " is not active now, skip '" + checking_ttb.shortname + "' notification")
 
+                    self.statisticsdb.close()
 
 
                     # A delay to prevent any spam control exceptions
