@@ -55,12 +55,12 @@ class NotificationsDB(CommonDB):
     # Creates necessary tables after db was created
     def construct(self):
         for timetable in src.static.all_timetables:
-            self.cursor.execute('CREATE TABLE ' + timetable.shortname + ' (users)')
+            self.cursor.execute('CREATE TABLE ' + timetable.shortname + ' (user_id)')
         self.connection.commit()
 
     # Returns list of users notified about certain timetable
     def get_notified_users(self, timetable_name):
-        self.cursor.execute('SELECT users FROM ' + timetable_name)
+        self.cursor.execute('SELECT user_id FROM ' + timetable_name)
         result = self.cursor.fetchall()
 
         notified_users = []
@@ -86,7 +86,7 @@ class NotificationsDB(CommonDB):
 
     # Deletes user id from the db
     def disable_notifications(self, user_id, timetable_name):
-        self.cursor.execute('DELETE FROM ' + timetable_name + ' WHERE (users = \'' + user_id + '\')')
+        self.cursor.execute('DELETE FROM ' + timetable_name + ' WHERE (user_id = \'' + user_id + '\')')
         self.connection.commit()
 
 
