@@ -90,45 +90,6 @@ class NotificationsDB(CommonDB):
         self.connection.commit()
 
 
-class ClientsDB(CommonDB):
-    def __init__(self):
-        # Set path to the db
-        super().__init__(src.static.clientsdb_path)
-
-    # Creates necessary tables after db was created
-    def construct(self):
-        self.cursor.execute('CREATE TABLE clients (user_id)')
-        self.connection.commit()
-
-    # Returns list of unique users
-    def get_clients(self):
-        self.cursor.execute('SELECT * FROM clients')
-        result = self.cursor.fetchall()
-
-        clients = []
-        for i in result:
-            clients.append(i[0])
-
-        return(clients)
-
-    # Add a new user to this database (when '/start' command is sent)
-    def add_client(self, user_id):
-        self.cursor.execute('INSERT INTO clients VALUES (?)', (user_id,))
-        self.connection.commit()
-
-    def remove_client(self, user_id):
-        self.cursor.execute('DELETE FROM clients WHERE (user_id = "' + user_id + '")')
-        self.connection.commit()
-
-    def check_if_user_is_client(self, user_id):
-
-        clients = self.get_clients()
-
-        if user_id in clients:
-            return True
-        else:
-            return False
-
 class StatisticsDB(CommonDB):
     def __init__(self):
         # Set path to the db
