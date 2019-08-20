@@ -162,14 +162,13 @@ class LFTableBot():
                     # Add used id to statistics.db/uniq_users table
                     if user_id not in self.statisticsdb.get_unique_users():
                         self.statisticsdb.add_unique_user(user_id)
-                    self.statisticsdb.close()
 
                 else:
                     self.send_message(user_id,
                                       src.messages.start_text(),
                                       src.keyboards.start_keyboard())
 
-            self.statisticsdb.close()
+            #self.statisticsdb.close()
 
 
         return 'ok'

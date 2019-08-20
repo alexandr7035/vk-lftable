@@ -136,19 +136,19 @@ class StatisticsDB(CommonDB):
 
     # Creates necessary tables after db was created
     def construct(self):
-        self.cursor.execute('CREATE TABLE uniq_users (users)')        
+        self.cursor.execute('CREATE TABLE unique_users (user_id)')        
         self.cursor.execute('CREATE TABLE active_users (user_id)')
         self.connection.commit()    
     
         
     # Add a new user to this database (when '/start' command is sent)
     def add_unique_user(self, user_id):
-        self.cursor.execute('INSERT INTO uniq_users VALUES (?)', (user_id,))
+        self.cursor.execute('INSERT INTO unique_users VALUES (?)', (user_id,))
         self.connection.commit()
 
     # Returns list of unique users
     def get_unique_users(self):
-        self.cursor.execute('SELECT * FROM uniq_users')
+        self.cursor.execute('SELECT user_id FROM unique_users')
         result = self.cursor.fetchall()
 
         unique_users = []
@@ -159,7 +159,7 @@ class StatisticsDB(CommonDB):
 
     # Returns list of active users
     def get_active_users(self):
-        self.cursor.execute('SELECT * FROM active_users')
+        self.cursor.execute('SELECT user_id FROM active_users')
         result = self.cursor.fetchall()
 
         clients = []
