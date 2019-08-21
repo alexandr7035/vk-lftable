@@ -9,6 +9,7 @@ WORKDIR $APP
 COPY requirements.txt .
 
 # Set timezone
+RUN echo 'Europe/Minsk' > /etc/timezone
 RUN cp /usr/share/zoneinfo/Europe/Minsk /etc/localtime
 
 # Install Python dependencies
