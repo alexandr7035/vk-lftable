@@ -192,7 +192,7 @@ class LFTableBot():
                           'ek_polit_c1', 'ek_polit_c2', 'ek_polit_c3', 'ek_polit_c4',
                         'mag_c1', 'mag_c2']:
 
-            # See TTBS objects in src/static.py
+            # See TTB objects in src/static.py
             timetable = getattr(src.static, callback)
 
             # Enable/disable notifications

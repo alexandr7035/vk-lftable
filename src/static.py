@@ -2,7 +2,7 @@
 lftable_version = '3.0'
 
 # Class for storing timetable's options.
-class TTBS():
+class TTB():
     pass
 
 # API version
@@ -25,16 +25,16 @@ max_request_delay = 5
 download_interval = 0.01
 
 # All types of timetables
-pravo_c1 = TTBS()
-pravo_c2 = TTBS()
-pravo_c3 = TTBS()
-pravo_c4 = TTBS()
-mag_c1 = TTBS()
-mag_c2 = TTBS()
-ek_polit_c1 = TTBS()
-ek_polit_c2 = TTBS()
-ek_polit_c3 = TTBS()
-ek_polit_c4 = TTBS()
+pravo_c1 = TTB()
+pravo_c2 = TTB()
+pravo_c3 = TTB()
+pravo_c4 = TTB()
+mag_c1 = TTB()
+mag_c2 = TTB()
+ek_polit_c1 = TTB()
+ek_polit_c2 = TTB()
+ek_polit_c3 = TTB()
+ek_polit_c4 = TTB()
 
 all_timetables = [pravo_c1, pravo_c2, pravo_c3, pravo_c4, 
                  ek_polit_c1, ek_polit_c2, ek_polit_c3, ek_polit_c4,
