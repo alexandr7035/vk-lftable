@@ -16,9 +16,10 @@ clientsdb_path = db_dir + 'clients.db'
 statisticsdb_path = db_dir + 'statistics.db'
 log_dir = 'log/'
 
-# Intervals for update checks and notifications(s).
+# Intervals (s)
 check_updates_interval = 120
 send_message_interval = 2
+max_request_delay = 5
 
 # For download buttom to prevent spam control
 download_interval = 0.01

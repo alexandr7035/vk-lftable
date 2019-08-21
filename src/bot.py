@@ -116,9 +116,10 @@ class LFTableBot():
             user_id = str(data['object']['from_id'])
 
             # Prevent answers to old requests if bot was down
+            # See src.static.max_request_delay
             request_time = data['object']['date']
             requeste = data['object']['date']
-            if request_time <= round(time.time()) - 5:
+            if request_time <= round(time.time()) - src.static.max_request_delay:
                 logger.info("skipped request: user_id=" + user_id + ", time=" + str(request_time))
                 return('ok')
 
