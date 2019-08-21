@@ -33,15 +33,6 @@ except Exception:
     sys.exit()
 
 
-# Function which sends message (used instead of using multiple 'api.messages.send()')
-def bot_send_message(user_id, message_text, keyboard=None):
-
-    if keyboard == None:
-        api.messages.send(access_token=vk_token, user_id=user_id, message=message_text, keyboard=keyboard)
-    else:
-        api.messages.send(access_token=vk_token, user_id=user_id, message=message_text, keyboard=keyboard)
-
-
 class LFTableBot():
     def __init__(self):
 
