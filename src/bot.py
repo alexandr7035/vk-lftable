@@ -44,6 +44,10 @@ def bot_send_message(user_id, message_text, keyboard=None):
 
 class LFTableBot():
     def __init__(self):
+
+        logger.info("-")
+        logger.info("the program was STARTED now")
+
         # VK
         session = vk.Session()
         self.api = vk.API(session, v=src.static.vk_api_version)
@@ -144,15 +148,18 @@ class LFTableBot():
 
             else:
                 if data['object'].get('payload') and json.loads(data['object']['payload'])['button'] == 'start':
-                    # Add user to clients db
-                    self.statisticsdb.add_active_user(user_id)
-                    self.send_message(user_id,
-                                      src.messages.main_text(),
-                                      src.keyboards.main_keyboard())
 
                     # Add used id to statistics.db/uniq_users table
                     if user_id not in self.statisticsdb.get_unique_users():
+                        logger.info("add unique user " + user_id)
                         self.statisticsdb.add_unique_user(user_id)
+
+                    # Add user to clients db
+                    self.statisticsdb.add_active_user(user_id)
+                    logger.info("user " + user_id + " is now active")
+                    self.send_message(user_id,
+                                      src.messages.main_text(),
+                                      src.keyboards.main_keyboard())
 
                 else:
                     self.send_message(user_id,
@@ -194,9 +201,11 @@ class LFTableBot():
             self.notificationsdb.connect()
             if self.notificationsdb.check_if_user_notified(user_id, timetable.shortname) is True:
                 self.notificationsdb.disable_notifications(user_id, timetable.shortname)
+                logger.info('user ' + user_id + " disabled notifications for the '" + timetable.shortname + "' timetable")
                 self.send_message(user_id, src.messages.notification_disabled_text(timetable))
             else:
                 self.notificationsdb.enable_notifications(user_id, timetable.shortname)
+                logger.info('user ' + user_id + " enabled notifications for the '" + timetable.shortname + "' timetable")
                 self.send_message(user_id, src.messages.notification_enabled_text(timetable))
             self.notificationsdb.close()
 
@@ -215,6 +224,7 @@ class LFTableBot():
 
         if callback == 'stop':
             self.statisticsdb.remove_active_user(user_id)
+            logger.info("user " + user_id + " is now non-active")
             self.send_message(user_id, src.messages.stop_text())
 
     def send_message(self, user_id, text, keyboard=None):
