@@ -1,4 +1,4 @@
-FROM python:3
+FROM python:3.7.4
 
 # Directory for app files
 ENV APP /vk-lftable
