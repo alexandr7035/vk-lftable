@@ -27,6 +27,8 @@ def create_timetable_button(text, callback, user_id):
         return(create_button(text + ' 🔔', callback))
     else:
         return(create_button(text + ' 🔕', callback, 'red'))
+        
+    notificationsdb.close()
     
 
 
