@@ -16,7 +16,7 @@ import src.static
 import src.messages
 import src.keyboards
 import src.db_classes
-from src.lftable_logger import *
+from src.logger import *
 
 
 # Tokens
