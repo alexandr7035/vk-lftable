@@ -19,5 +19,4 @@ RUN pip install -r requirements.txt
 COPY . .
 
 # Run the app
-#CMD ["gunicorn", "vk-lftable:app", "--bind", "127.0.0.1:5000"]
 CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:5000"]
