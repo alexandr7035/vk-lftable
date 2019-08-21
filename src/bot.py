@@ -8,8 +8,7 @@ import atexit
 from datetime import datetime
 
 import vk
-import flask
-from flask import Flask, request, json
+from flask import json
 from apscheduler.schedulers.background import BackgroundScheduler
 
 # See 'src/' directory
@@ -299,21 +298,3 @@ class LFTableBot():
 
         # Close 'times.db' until next check.
         self.timesdb.close()
-
-
-bot = LFTableBot()
-
-app = flask.Flask(__name__)
-
-@app.route('/', methods=['POST'])
-def main_handler():
-    return(bot.handle_request(request))
-
-
-if __name__ == '__main__':
-
-    # Log message
-    logger.info("the program was STARTED now")
-
-    app.run(host='127.0.0.1', port=5080, use_reloader=False)
-
