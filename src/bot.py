@@ -33,8 +33,6 @@ except Exception:
     sys.exit()
 
 
-
-
 # Function which sends message (used instead of using multiple 'api.messages.send()')
 def bot_send_message(user_id, message_text, keyboard=None):
 
@@ -65,7 +63,6 @@ class LFTableBot():
             update_time = src.gettime.ttb_gettime(timetable).strftime('%d.%m.%Y %H:%M:%S')
             self.timesdb.write_time(timetable.shortname, update_time)
         self.timesdb.close()
-
 
         # Timejob for notifications
         # Use 'atexit' to shut down the scheduler when exiting the app
@@ -124,16 +121,12 @@ class LFTableBot():
             # Get user id
             user_id = str(data['object']['from_id'])
 
-
             # Prevent answers to old requests if bot was down
             request_time = data['object']['date']
             requeste = data['object']['date']
             if request_time <= round(time.time()) - 5:
                 logger.info("skipped request: user_id=" + user_id + ", time=" + str(request_time))
                 return('ok')
-
-
-
 
             self.statisticsdb.connect()
 
@@ -167,7 +160,6 @@ class LFTableBot():
                                       src.keyboards.start_keyboard())
 
             self.statisticsdb.close()
-
 
         return 'ok'
 
@@ -221,18 +213,15 @@ class LFTableBot():
                                   src.messages.main_text(),
                                   src.keyboards.mag_keyboard(user_id))
 
-
         if callback == 'stop':
             self.statisticsdb.remove_active_user(user_id)
             self.send_message(user_id, src.messages.stop_text())
-
 
     def send_message(self, user_id, text, keyboard=None):
         self.api.messages.send(access_token=vk_token,
                               user_id=user_id,
                               message=text,
                               keyboard=keyboard)
-
 
     def notifications_timejob(self):
         print('Checking for ttb updates was started: ', datetime.now().strftime("%d.%m.%Y %Y %H:%M:%S"))
