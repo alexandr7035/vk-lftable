@@ -68,13 +68,12 @@ class LFTableBot():
         scheduler.start()
         atexit.register(lambda: scheduler.shutdown())
 
-
+    # Create necessary directories and files
     def prepare_workspace(self):
 
         # Create directory for sqlite3 databases
         if not os.path.exists(src.static.db_dir):
             os.mkdir(src.static.db_dir)
-
             logger.info("'" + src.static.db_dir + "' directory was created")
 
         # Create databases. See db_classes.py (especially 'construct()' methods)
@@ -125,11 +124,13 @@ class LFTableBot():
 
             self.statisticsdb.connect()
 
+            # If user is active (pressed 'start' before)
             if self.statisticsdb.check_if_user_is_active(user_id) is True:
 
                 # That means a button was pressed
                 if data['object'].get('payload'):
                     callback = json.loads(data['object']['payload'])['button']
+                    # Call method wich handles button click
                     self.handle_button_callback(user_id, callback)
                 # Usual message was sent
                 else:
@@ -137,7 +138,9 @@ class LFTableBot():
                                      src.messages.main_text(),
                                      src.keyboards.main_keyboard())
 
+            # If user is not active
             else:
+                # Make user active if he pressed 'start' button
                 if data['object'].get('payload') and json.loads(data['object']['payload'])['button'] == 'start':
 
                     # Add used id to statistics.db/uniq_users table
@@ -151,7 +154,7 @@ class LFTableBot():
                     self.send_message(user_id,
                                       src.messages.main_text(),
                                       src.keyboards.main_keyboard())
-
+                # Send invitation again and again until 'start' button is pressed
                 else:
                     self.send_message(user_id,
                                       src.messages.start_text(),
@@ -159,6 +162,7 @@ class LFTableBot():
 
             self.statisticsdb.close()
 
+        # This reply is necessary for vk
         return 'ok'
 
     def handle_button_callback(self, user_id, callback):
@@ -187,8 +191,10 @@ class LFTableBot():
                           'ek_polit_c1', 'ek_polit_c2', 'ek_polit_c3', 'ek_polit_c4',
                         'mag_c1', 'mag_c2']:
 
+            # See TTBS objects in src/static.py
             timetable = getattr(src.static, callback)
 
+            # Enable/disable notifications
             self.notificationsdb.connect()
             if self.notificationsdb.check_if_user_notified(user_id, timetable.shortname) is True:
                 self.notificationsdb.disable_notifications(user_id, timetable.shortname)
