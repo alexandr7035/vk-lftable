@@ -2,6 +2,7 @@ import time
 import src.static
 import src.gettime
 
+# Each function in this module returns message text according to its name
 
 # Will be romoved later.
 missing_keyboard_warning = '⚠ Если Вы не видите клавиатуру, попробуйте использовать браузерную версию VK (https://vk.com).'

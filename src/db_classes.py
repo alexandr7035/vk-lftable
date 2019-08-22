@@ -97,11 +97,11 @@ class StatisticsDB(CommonDB):
 
     # Creates necessary tables after db was created
     def construct(self):
-        self.cursor.execute('CREATE TABLE unique_users (user_id)')        
+        self.cursor.execute('CREATE TABLE unique_users (user_id)')
         self.cursor.execute('CREATE TABLE active_users (user_id)')
-        self.connection.commit()    
-    
-        
+        self.connection.commit()
+
+
     # Add a new user to this database (when '/start' command is sent)
     def add_unique_user(self, user_id):
         self.cursor.execute('INSERT INTO unique_users VALUES (?)', (user_id,))
@@ -122,12 +122,12 @@ class StatisticsDB(CommonDB):
     def add_active_user(self, user_id):
         self.cursor.execute('INSERT INTO active_users VALUES (?)', (user_id,))
         self.connection.commit()
-    
+
     # Remove active user
     def remove_active_user(self, user_id):
         self.cursor.execute('DELETE FROM active_users WHERE (user_id = "' + user_id + '")')
         self.connection.commit()
-        
+
     # Returns list of active users
     def get_active_users(self):
         self.cursor.execute('SELECT user_id FROM active_users')

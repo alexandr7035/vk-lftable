@@ -1,14 +1,10 @@
 # Version number
 lftable_version = '3.0'
 
-# Class for storing timetable's options.
-class TTB():
-    pass
-
 # API version
 vk_api_version = 5.90
 
-# Databases.
+# Pathes
 db_dir = 'db/'
 notificationsdb_path = db_dir + 'notifications.db'
 timesdb_path = db_dir + 'times.db'
@@ -24,7 +20,11 @@ max_request_delay = 5
 # For download buttom to prevent spam control
 download_interval = 0.01
 
-# All types of timetables
+# Class to store timetable options
+class TTB():
+    pass
+
+# All types of timetables for all courses
 pravo_c1 = TTB()
 pravo_c2 = TTB()
 pravo_c3 = TTB()
@@ -36,10 +36,12 @@ ek_polit_c2 = TTB()
 ek_polit_c3 = TTB()
 ek_polit_c4 = TTB()
 
+# List to simplify 'for' loops (in order not to write all timetables many times)
 all_timetables = [pravo_c1, pravo_c2, pravo_c3, pravo_c4, 
                  ek_polit_c1, ek_polit_c2, ek_polit_c3, ek_polit_c4,
                  mag_c1, mag_c2]
 
+# Timetable data
 pravo_c1.url = 'https://law.bsu.by/pub/2/Raspisanie_1_pravo.xls'
 pravo_c1.name = 'Правоведение, 1-й курс'
 pravo_c1.shortname = 'pravo_c1'
@@ -80,10 +82,13 @@ mag_c2.url = 'https://law.bsu.by/pub/2/Raspisanie_mag_2_kurs.xls'
 mag_c2.name = 'Магистратура, 2-й курс'
 mag_c2.shortname = 'mag_c2'
 
+# Possible button colors for vk api
+# Dictionary allows to use friendly color names 
 button_colors_dict = {'red':'negative', 
                      'green':'positive',
                      'blue':'primary',
                      'white':'secondary',
 }
 
+# If no color specified, src.keyboards.create_button() function uses this value
 default_button_color = 'green'

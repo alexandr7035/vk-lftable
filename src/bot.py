@@ -50,7 +50,7 @@ class LFTableBot():
         # Create necessary directories and files
         self.prepare_workspace()
 
-        # Sets times to the 'times.db' immediately after the run WITHOUT notifiying users
+        # Sets times to the TimesDB immediately after the run WITHOUT notifiying users
         # This is to prevent late notifications if the bot was down for a long time
         self.timesdb.connect()
         for timetable in src.static.all_timetables:
@@ -76,6 +76,7 @@ class LFTableBot():
             logger.info("'" + src.static.db_dir + "' directory was created")
 
         # Create databases. See db_classes.py (especially 'construct()' methods)
+        #TimesDB
         if not os.path.isfile(src.static.timesdb_path):
             self.timesdb.connect()
             self.timesdb.construct()
@@ -83,6 +84,7 @@ class LFTableBot():
 
             logger.info("'" + src.static.timesdb_path + "' database was created")
 
+        # NotificationsDB
         if not os.path.isfile(src.static.notificationsdb_path):
             self.notificationsdb.connect()
             self.notificationsdb.construct()
@@ -90,6 +92,7 @@ class LFTableBot():
 
             logger.info("'" + src.static.notificationsdb_path + "' database was created")
 
+        # StatisticsDB
         if not os.path.isfile(src.static.statisticsdb_path):
             self.statisticsdb.connect()
             self.statisticsdb.construct()
@@ -97,6 +100,7 @@ class LFTableBot():
 
             logger.info("'" + src.static.statisticsdb_path + "' database was created")
 
+    # Each request that flask (app.py) receives is passed as an argument to this function
     def handle_request(self, flask_request):
         data = json.loads(flask_request.data)
         print(data)
@@ -143,12 +147,12 @@ class LFTableBot():
                 # Make user active if he pressed 'start' button
                 if data['object'].get('payload') and json.loads(data['object']['payload'])['button'] == 'start':
 
-                    # Add used id to statistics.db/uniq_users table
+                    # Add user id to unique_users table (if there is no)
                     if user_id not in self.statisticsdb.get_unique_users():
                         logger.info("add unique user " + user_id)
                         self.statisticsdb.add_unique_user(user_id)
 
-                    # Add user to clients db
+                    # Add user id to 'active_users' table
                     self.statisticsdb.add_active_user(user_id)
                     logger.info("user " + user_id + " is now active")
                     self.send_message(user_id,
@@ -165,14 +169,18 @@ class LFTableBot():
         # This reply is necessary for vk
         return 'ok'
 
+    # Method wich handles button  (except 'start' button)
     def handle_button_callback(self, user_id, callback):
 
+        # Show main menu
         if callback == 'main_menu':
             self.send_message(user_id, src.messages.main_text(), src.keyboards.main_keyboard())
 
+        # Message with links to download timetable
         if callback == 'download':
             self.send_message(user_id, src.messages.download_text(), src.keyboards.download_keyboard())
 
+        # Show menus for specialties (keyboard contains timetable buttons
         if callback in ['pravo_menu', 'ek_polit_menu', 'mag_menu']:
             if callback == 'pravo_menu':
                 self.send_message(user_id,
@@ -187,6 +195,7 @@ class LFTableBot():
                                   src.messages.main_text(),
                                   src.keyboards.mag_keyboard(user_id))
 
+        # If timetable button was pressed update keyboard with enable/disable notifications buttons
         if  callback in ['pravo_c1', 'pravo_c2', 'pravo_c3', 'pravo_c4',
                           'ek_polit_c1', 'ek_polit_c2', 'ek_polit_c3', 'ek_polit_c4',
                         'mag_c1', 'mag_c2']:
@@ -206,6 +215,7 @@ class LFTableBot():
                 self.send_message(user_id, src.messages.notification_enabled_text(timetable))
             self.notificationsdb.close()
 
+            # Choose speciality message and show it again (with updated buttons)
             if callback in ['pravo_c1', 'pravo_c2', 'pravo_c3', 'pravo_c4']:
                 self.send_message(user_id,
                                   src.messages.main_text(),
@@ -219,6 +229,7 @@ class LFTableBot():
                                   src.messages.main_text(),
                                   src.keyboards.mag_keyboard(user_id))
 
+        # 'Stop' button. Make user non-active until 'start' button is pressed again
         if callback == 'stop':
             self.statisticsdb.remove_active_user(user_id)
             logger.info("user " + user_id + " is now non-active")
@@ -239,19 +250,19 @@ class LFTableBot():
         # See 'all_timetables' list in 'src/static.py'
         for checking_ttb in src.static.all_timetables:
 
-            # Get ttb update time from law.bsu.by
+            # Get timetable update time from law.bsu.by
+            # See 'src/gettime.py' module
             update_time = src.gettime.ttb_gettime(checking_ttb).strftime('%d.%m.%Y %H:%M:%S')
 
-            # Get old update time from db.
+            # Get old update time from the TimesDB.
             old_update_time = self.timesdb.get_time(checking_ttb.shortname)
 
-            # Convert string dates to datetime objects
+            # Convert date strings to datetime objects
             dt_update_time = datetime.strptime(update_time, '%d.%m.%Y %H:%M:%S')
             dt_old_update_time = datetime.strptime(old_update_time, '%d.%m.%Y %H:%M:%S')
 
             # Compare the two dates
-            # If the timetable was updated, sends it to all users
-            #+ from certain table in 'users.db'
+            # If timetable was updated send a notification to users who enabled notifications for this timetable
             if dt_update_time > dt_old_update_time:
 
                 logger.info("'" + checking_ttb.shortname + "' timetable was updated at " + update_time)
@@ -265,6 +276,7 @@ class LFTableBot():
                 for user_id in users_to_notify:
 
                     self.statisticsdb.connect()
+                    # Send only if user is active
                     if self.statisticsdb.check_if_user_is_active(user_id) is True:
 
                         try:
@@ -277,6 +289,7 @@ class LFTableBot():
                             logger.info("can't send '" + checking_ttb.shortname + "' notification to user " + user_id + ", skip")
                             continue
 
+                    # Write to log if user is not active
                     else:
                         logger.info("user " + user_id + " is not active now, skip '" + checking_ttb.shortname + "' notification")
 
