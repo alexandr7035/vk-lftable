@@ -36,7 +36,7 @@ class LFTableBot():
     def __init__(self):
 
         logger.info("-")
-        logger.info("the program was STARTED now")
+        logger.info("vk-lftable was STARTED now")
 
         # VK
         session = vk.Session()
