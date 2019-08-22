@@ -1,6 +1,6 @@
 import os
 import logging
-from src.static import log_dir
+from src.static import log_dir, log_file
 
 
 # Don't run if can't create logging dir
@@ -13,7 +13,7 @@ if not os.path.exists(log_dir):
         sys.exit()
 
 
-logging_filename = log_dir + 'lftable.log'
+logging_filename = log_file
 
 logger = logging.getLogger('lftable')
 logger.setLevel(logging.DEBUG)

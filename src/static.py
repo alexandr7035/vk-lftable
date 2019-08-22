@@ -11,6 +11,7 @@ timesdb_path = db_dir + 'times.db'
 clientsdb_path = db_dir + 'clients.db'
 statisticsdb_path = db_dir + 'statistics.db'
 log_dir = 'log/'
+log_file = log_dir + 'lftable.log'
 
 # Intervals (s)
 check_updates_interval = 120
