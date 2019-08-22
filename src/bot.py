@@ -3,7 +3,6 @@
 import os
 import sys
 import time
-import sqlite3
 import atexit
 from datetime import datetime
 
