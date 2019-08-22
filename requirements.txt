@@ -1,5 +1,5 @@
-vk
-flask
-pytz
-apscheduler
-gunicorn
+vk==2.0.2
+flask==1.1.1
+pytz==2019.2
+apscheduler==3.6.1
+gunicorn==19.9.0
