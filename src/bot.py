@@ -239,7 +239,8 @@ class LFTableBot():
         self.api.messages.send(access_token=vk_token,
                               user_id=user_id,
                               message=text,
-                              keyboard=keyboard)
+                              keyboard=keyboard,
+                              dont_parse_links=1)
 
     def notifications_timejob(self):
         print('Checking for ttb updates was started: ', datetime.now().strftime("%d.%m.%Y %Y %H:%M:%S"))
