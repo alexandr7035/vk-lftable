@@ -15,7 +15,7 @@ log_file = log_dir + 'lftable.log'
 
 # Intervals (s)
 check_updates_interval = 120
-send_message_interval = 2
+send_message_interval = 0.055
 max_request_delay = 5
 
 # For download buttom to prevent spam control
