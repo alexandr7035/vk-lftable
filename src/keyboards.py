@@ -34,19 +34,15 @@ def create_timetable_button(text, callback, user_id):
 
 # Keyboard for main menu
 def main_keyboard():
-    pravo_btn = create_button('📌 Правоведение', 'pravo_menu')
-    ek_polit_btn = create_button('📌 Эк. и полит.', 'ek_polit_menu')
-    mag_btn  = create_button('📌 Магистратура', 'mag_menu')
-
-    download_btn = create_button('⬇️ Скачать', 'download')
+    pravo_btn = create_button('📕 Правоведение', 'pravo_menu')
+    ek_polit_btn = create_button('📗 Эк. и полит.', 'ek_polit_menu')
+    mag_btn  = create_button('📒 Магистратура', 'mag_menu')
     stop_btn = create_button('Отключить 🚫', 'stop')
 
     keyboard = {
     "one_time": True,
     "buttons": [[pravo_btn, ek_polit_btn],
-                [mag_btn, download_btn],
-                [stop_btn]]
-
+                [mag_btn, stop_btn]]
     }
 
     return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
@@ -58,14 +54,14 @@ def pravo_keyboard(user_id):
     pravo_c3_btn = create_timetable_button('Прав. - 3⃣', src.static.pravo_c3.shortname, user_id)
     pravo_c4_btn = create_timetable_button('Прав. - 4⃣', src.static.pravo_c4.shortname, user_id)
     back_button = create_button('⬅️ Назад', 'main_menu')
-
-
+    refresh_btn = create_button('Обновить 🔄', 'refresh_pravo')
 
     keyboard = {
     "one_time": True,
     "buttons": [[pravo_c1_btn, pravo_c2_btn],
                 [pravo_c3_btn, pravo_c4_btn],
-                [back_button]]
+                [back_button, refresh_btn]]
+
     }
 
     return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
@@ -76,12 +72,13 @@ def ek_polit_keyboard(user_id):
     ek_polit_c3_btn = create_timetable_button('Эк-полит. - 3⃣', src.static.ek_polit_c3.shortname, user_id)
     ek_polit_c4_btn = create_timetable_button('Эк-полит. - 4⃣', src.static.ek_polit_c4.shortname, user_id)
     back_button = create_button('⬅️ Назад', 'main_menu')
+    refresh_btn = create_button('Обновить 🔄', 'refresh_ek_polit')
 
     keyboard = {
     "one_time": True,
     "buttons": [[ek_polit_c1_btn, ek_polit_c2_btn],
                 [ek_polit_c3_btn, ek_polit_c4_btn],
-                [back_button]]
+                [back_button, refresh_btn]]
     }
 
     return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
@@ -89,25 +86,13 @@ def ek_polit_keyboard(user_id):
 def mag_keyboard(user_id):
     mag_c1_btn = create_timetable_button('Маг. - 1⃣', src.static.mag_c1.shortname, user_id)
     mag_c2_btn = create_timetable_button('Маг. - 2⃣', src.static.mag_c2.shortname, user_id)
+    refresh_btn = create_button('Обновить 🔄', 'refresh_mag')
     back_button = create_button('⬅️ Назад', 'main_menu')
 
     keyboard = {
     "one_time": True,
     "buttons": [[mag_c1_btn, mag_c2_btn],
-                [back_button]]
-    }
-
-    return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
-
-# Keyboard for download message (only 'back' button to show main menu)
-def download_keyboard():
-
-    back_button = create_button('⬅ Назад', 'main_menu')
-
-    keyboard = {
-    "one_time": True,
-    "buttons": [[back_button]]
-
+                [back_button, refresh_btn]]
     }
 
     return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))

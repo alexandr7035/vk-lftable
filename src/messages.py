@@ -1,6 +1,7 @@
 import time
 import src.static
 import src.gettime
+import datetime
 
 # Each function in this module returns message text according to its name
 
@@ -14,20 +15,6 @@ def main_text():
 
     return(text)
 
-
-def download_text():
-    text = ''
-
-    for ttb in src.static.all_timetables:
-
-        text += '⬇️ "' + ttb.name + '" - ' + ttb.url + ' - ' + src.gettime.ttb_gettime(ttb).strftime('%d.%m.%Y %H:%M') + '\n'
-        time.sleep(src.static.download_interval)
-
-    text += '\n' + missing_keyboard_warning
-
-    return(text)
-
-
 def start_text():
     text = '🗓 VK-LFTable v' + src.static.lftable_version + ': быстрый доступ к расписанию занятий юридического факультета БГУ.\n\n'
 
@@ -39,6 +26,38 @@ def start_text():
 def stop_text():
     text = '❗️ Отключены все уведомления, клавиатура скрыта. \n'
     text += '️⌨️ ️Чтобы снова начать работу с LFTable, напишите любое сообщение.'
+
+    return(text)
+
+def pravo_menu_text():
+    text = '📚 Правоведение 📚\n\n'
+
+    for ttb, course in zip([src.static.pravo_c1, src.static.pravo_c2,
+                src.static.pravo_c3, src.static.pravo_c4], ['1️⃣', '2️⃣', '3️⃣', '4️⃣']):
+                    text += str(course) + '-й курс: ' + ttb.url + ' - ' + src.gettime.ttb_gettime(ttb).strftime('%d.%m.%Y %H:%M') + '\n'
+    text += '----------------\n'
+    text += 'Информанция обновлена: ' + datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")
+
+    return(text)
+
+def ek_polit_menu_text():
+    text = '📚 Экономическое право и политология 📚\n\n'
+
+    for ttb, course in zip([src.static.ek_polit_c1, src.static.ek_polit_c2,
+                src.static.ek_polit_c3, src.static.ek_polit_c4], ['1️⃣', '2️⃣', '3️⃣', '4️⃣']):
+                    text += str(course) + '-й курс: ' + ttb.url + ' - ' + src.gettime.ttb_gettime(ttb).strftime('%d.%m.%Y %H:%M') + '\n'
+    text += '----------------\n'
+    text += 'Информанция обновлена: ' + datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")
+
+    return(text)
+
+def mag_menu_text():
+    text = '📚 Магистратура 📚\n\n'
+
+    for ttb, course in zip([src.static.mag_c1, src.static.mag_c2], ['1️⃣', '2️⃣']):
+                    text += str(course) + '-й курс: ' + ttb.url + ' - ' + src.gettime.ttb_gettime(ttb).strftime('%d.%m.%Y %H:%M') + '\n'
+    text += '----------------\n'
+    text += 'Информанция обновлена: ' + datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")
 
     return(text)
 
