@@ -34,9 +34,9 @@ def create_timetable_button(text, callback, user_id):
 
 # Keyboard for main menu
 def main_keyboard():
-    pravo_btn = create_button('📌 Правоведение', 'pravo_menu')
-    ek_polit_btn = create_button('📌 Эк. и полит.', 'ek_polit_menu')
-    mag_btn  = create_button('📌 Магистратура', 'mag_menu')
+    pravo_btn = create_button('📕 Правоведение', 'pravo_menu')
+    ek_polit_btn = create_button('📗 Эк. и полит.', 'ek_polit_menu')
+    mag_btn  = create_button('📒 Магистратура', 'mag_menu')
     stop_btn = create_button('Отключить 🚫', 'stop')
 
     keyboard = {
