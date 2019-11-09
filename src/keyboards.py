@@ -54,7 +54,7 @@ def pravo_keyboard(user_id):
     pravo_c3_btn = create_timetable_button('Прав. - 3⃣', src.static.pravo_c3.shortname, user_id)
     pravo_c4_btn = create_timetable_button('Прав. - 4⃣', src.static.pravo_c4.shortname, user_id)
     back_button = create_button('⬅️ Назад', 'main_menu')
-    refresh_btn = create_button('Обновить 🔄', 'refresh')
+    refresh_btn = create_button('Обновить 🔄', 'refresh_pravo')
 
     keyboard = {
     "one_time": True,
@@ -72,7 +72,7 @@ def ek_polit_keyboard(user_id):
     ek_polit_c3_btn = create_timetable_button('Эк-полит. - 3⃣', src.static.ek_polit_c3.shortname, user_id)
     ek_polit_c4_btn = create_timetable_button('Эк-полит. - 4⃣', src.static.ek_polit_c4.shortname, user_id)
     back_button = create_button('⬅️ Назад', 'main_menu')
-    refresh_btn = create_button('Обновить 🔄', 'refresh')
+    refresh_btn = create_button('Обновить 🔄', 'refresh_ek_polit')
 
     keyboard = {
     "one_time": True,
@@ -86,7 +86,7 @@ def ek_polit_keyboard(user_id):
 def mag_keyboard(user_id):
     mag_c1_btn = create_timetable_button('Маг. - 1⃣', src.static.mag_c1.shortname, user_id)
     mag_c2_btn = create_timetable_button('Маг. - 2⃣', src.static.mag_c2.shortname, user_id)
-    refresh_btn = create_button('Обновить 🔄', 'refresh')
+    refresh_btn = create_button('Обновить 🔄', 'refresh_mag')
     back_button = create_button('⬅️ Назад', 'main_menu')
 
     keyboard = {

@@ -181,17 +181,17 @@ class LFTableBot():
             self.send_message(user_id, src.messages.download_text(), src.keyboards.download_keyboard())
 
         # Show menus for specialties (keyboard contains timetable buttons
-        if callback in ['pravo_menu', 'ek_polit_menu', 'mag_menu']:
+        if callback in ['pravo_menu', 'ek_polit_menu', 'mag_menu', 'refresh_pravo', 'refresh_ek_polit', 'refresh_mag']:
 
-            if callback == 'pravo_menu':
+            if callback in ['pravo_menu', 'refresh_pravo']:
                 self.send_message(user_id,
                                   src.messages.pravo_menu_text(),
                                   src.keyboards.pravo_keyboard(user_id))
-            elif callback == 'ek_polit_menu':
+            elif callback in ['ek_polit_menu', 'refresh_ek_polit']:
                 self.send_message(user_id,
                                   src.messages.ek_polit_menu_text(),
                                   src.keyboards.ek_polit_keyboard(user_id))
-            elif callback == 'mag_menu':
+            elif callback in ['mag_menu', 'refresh_mag']:
                 self.send_message(user_id,
                                   src.messages.mag_menu_text(),
                                   src.keyboards.mag_keyboard(user_id))
