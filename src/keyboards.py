@@ -37,16 +37,12 @@ def main_keyboard():
     pravo_btn = create_button('📌 Правоведение', 'pravo_menu')
     ek_polit_btn = create_button('📌 Эк. и полит.', 'ek_polit_menu')
     mag_btn  = create_button('📌 Магистратура', 'mag_menu')
-
-    download_btn = create_button('⬇️ Скачать', 'download')
     stop_btn = create_button('Отключить 🚫', 'stop')
 
     keyboard = {
     "one_time": True,
     "buttons": [[pravo_btn, ek_polit_btn],
-                [mag_btn, download_btn],
-                [stop_btn]]
-
+                [mag_btn, stop_btn]]
     }
 
     return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
@@ -97,19 +93,6 @@ def mag_keyboard(user_id):
     "one_time": True,
     "buttons": [[mag_c1_btn, mag_c2_btn],
                 [back_button, refresh_btn]]
-    }
-
-    return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
-
-# Keyboard for download message (only 'back' button to show main menu)
-def download_keyboard():
-
-    back_button = create_button('⬅ Назад', 'main_menu')
-
-    keyboard = {
-    "one_time": True,
-    "buttons": [[back_button]]
-
     }
 
     return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
