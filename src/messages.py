@@ -15,20 +15,6 @@ def main_text():
 
     return(text)
 
-
-def download_text():
-    text = ''
-
-    for ttb in src.static.all_timetables:
-
-        text += '⬇️ "' + ttb.name + '" - ' + ttb.url + ' - ' + src.gettime.ttb_gettime(ttb).strftime('%d.%m.%Y %H:%M') + '\n'
-        time.sleep(src.static.download_interval)
-
-    text += '\n' + missing_keyboard_warning
-
-    return(text)
-
-
 def start_text():
     text = '🗓 VK-LFTable v' + src.static.lftable_version + ': быстрый доступ к расписанию занятий юридического факультета БГУ.\n\n'
 
