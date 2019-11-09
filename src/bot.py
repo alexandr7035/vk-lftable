@@ -182,17 +182,18 @@ class LFTableBot():
 
         # Show menus for specialties (keyboard contains timetable buttons
         if callback in ['pravo_menu', 'ek_polit_menu', 'mag_menu']:
+
             if callback == 'pravo_menu':
                 self.send_message(user_id,
-                                  src.messages.main_text(),
+                                  src.messages.pravo_menu_text(),
                                   src.keyboards.pravo_keyboard(user_id))
             elif callback == 'ek_polit_menu':
                 self.send_message(user_id,
-                                  src.messages.main_text(),
+                                  src.messages.ek_polit_menu_text(),
                                   src.keyboards.ek_polit_keyboard(user_id))
             elif callback == 'mag_menu':
                 self.send_message(user_id,
-                                  src.messages.main_text(),
+                                  src.messages.mag_menu_text(),
                                   src.keyboards.mag_keyboard(user_id))
 
         # If timetable button was pressed update keyboard with enable/disable notifications buttons
@@ -218,15 +219,15 @@ class LFTableBot():
             # Choose speciality message and show it again (with updated buttons)
             if callback in ['pravo_c1', 'pravo_c2', 'pravo_c3', 'pravo_c4']:
                 self.send_message(user_id,
-                                  src.messages.main_text(),
+                                  src.messages.pravo_menu_text(),
                                   src.keyboards.pravo_keyboard(user_id))
             elif callback in ['ek_polit_c1', 'ek_polit_c2', 'ek_polit_c3', 'ek_polit_c4']:
                 self.send_message(user_id,
-                                  src.messages.main_text(),
+                                  src.messages.ek_polit_menu_text(),
                                   src.keyboards.ek_polit_keyboard(user_id))
             elif callback in ['mag_c1', 'mag_c2']:
                 self.send_message(user_id,
-                                  src.messages.main_text(),
+                                  src.messages.mag_menu_text(),
                                   src.keyboards.mag_keyboard(user_id))
 
         # 'Stop' button. Make user non-active until 'start' button is pressed again
