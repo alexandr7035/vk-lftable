@@ -30,7 +30,7 @@ def stop_text():
     return(text)
 
 def pravo_menu_text():
-    text = '✏️ Правоведение ✏️\n'
+    text = '✏️ Правоведение ✏️\n\n'
 
     for ttb, course in zip([src.static.pravo_c1, src.static.pravo_c2,
                 src.static.pravo_c3, src.static.pravo_c4], ['1️⃣', '2️⃣', '3️⃣', '4️⃣']):
@@ -41,7 +41,7 @@ def pravo_menu_text():
     return(text)
 
 def ek_polit_menu_text():
-    text = '✏️ Экономическое право и политология ✏️\n'
+    text = '✏️ Экономическое право и политология ✏️\n\n'
 
     for ttb, course in zip([src.static.ek_polit_c1, src.static.ek_polit_c2,
                 src.static.ek_polit_c3, src.static.ek_polit_c4], ['1️⃣', '2️⃣', '3️⃣', '4️⃣']):
@@ -52,7 +52,7 @@ def ek_polit_menu_text():
     return(text)
 
 def mag_menu_text():
-    text = '✏️ Магистратура ✏️\n'
+    text = '✏️ Магистратура ✏️\n\n'
 
     for ttb, course in zip([src.static.mag_c1, src.static.mag_c2], ['1️⃣', '2️⃣']):
                     text += str(course) + '-й курс: ' + ttb.url + ' - ' + src.gettime.ttb_gettime(ttb).strftime('%d.%m.%Y %H:%M') + '\n'
