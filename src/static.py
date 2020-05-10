@@ -1,5 +1,5 @@
 # Version number
-lftable_version = '3.2.1'
+lftable_version = '4.0'
 
 # API version
 vk_api_version = 5.90
