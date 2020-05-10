@@ -62,6 +62,32 @@ def mag_menu_text():
     return(text)
 
 
+def credits_menu_text():
+    text = '📚 Экономическое право и политология 📚\n\n'
+
+    for ttb, course in zip([src.static.credit_c1, src.static.credit_c2,
+                src.static.credit_c3, src.static.credit_c4], ['1️⃣', '2️⃣', '3️⃣', '4️⃣']):
+                    data = src.gettime.credit_exam_gettime(ttb)
+                    text += str(course) + '-й курс: ' + data['url'] + ' - ' + data['time'].strftime('%d.%m.%Y %H:%M') + '\n'
+    text += '----------------\n'
+    text += 'Информанция обновлена: ' + datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")
+
+    return(text)
+
+
+def exams_menu_text():
+    text = '📚 Экономическое право и политология 📚\n\n'
+
+    for ttb, course in zip([src.static.exam_c1, src.static.exam_c2,
+                src.static.exam_c3, src.static.exam_c4], ['1️⃣', '2️⃣', '3️⃣', '4️⃣']):
+                    data = src.gettime.credit_exam_gettime(ttb)
+                    text += str(course) + '-й курс: ' + data['url'] + ' - ' + data['time'].strftime('%d.%m.%Y %H:%M') + '\n'
+    text += '----------------\n'
+    text += 'Информанция обновлена: ' + datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")
+
+    return(text)
+
+
 def notification_enabled_text(ttb):
     text = '🔔 Включены уведомления для расписания "' + ttb.name + '".'
 
@@ -74,12 +100,12 @@ def notification_disabled_text(ttb):
     return(text)
 
 
-def notification_text(timetable, update_time):
+def notification_text(timetable, update_time, timetable_url):
     text = '🔔 Обновлено расписание "' + timetable.name + '" 🔔' + '\n\n'
 
     text += 'Дата обновления: ' + update_time.strftime('%d.%m.%Y') + '\n'
     text += 'Время обновления: ' + update_time.strftime('%H:%M') + '\n\n'
 
-    text += '⬇️ Скачать: ' + timetable.url + '\n\n'
+    text += '⬇️ Скачать: ' + timetable_url + '\n\n'
 
     return(text)

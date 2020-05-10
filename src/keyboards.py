@@ -105,13 +105,13 @@ def mag_keyboard(user_id):
 
 
 def credits_keyboard(user_id):
-    credit_c1_btn = create_timetable_button('Зачеты - 1⃣', src.static.credit_c1.shortname. user_id)
-    credit_c2_btn = create_timetable_button('Зачеты - 1⃣', src.static.credit_c2.shortname. user_id)
-    credit_c3_btn = create_timetable_button('Зачеты - 1⃣', src.static.credit_c3.shortname. user_id)
-    credit_c4_btn = create_timetable_button('Зачеты - 1⃣', src.static.credit_c4.shortname. user_id)
+    credit_c1_btn = create_timetable_button('Зачеты - 1⃣', src.static.credit_c1.shortname, user_id)
+    credit_c2_btn = create_timetable_button('Зачеты - 2️⃣', src.static.credit_c2.shortname, user_id)
+    credit_c3_btn = create_timetable_button('Зачеты - 3️⃣', src.static.credit_c3.shortname, user_id)
+    credit_c4_btn = create_timetable_button('Зачеты - 4️⃣', src.static.credit_c4.shortname, user_id)
 
     back_button = create_button('⬅️ Назад', 'main_menu')
-    refresh_btn = create_button('Обновить 🔄', 'refresh_pravo')
+    refresh_btn = create_button('Обновить 🔄', 'refresh_credits')
 
     keyboard = {
     "one_time": True,
@@ -121,15 +121,17 @@ def credits_keyboard(user_id):
 
     }
 
+    return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
+
 
 def exams_keyboard(user_id):
-    exam_c1_btn = create_timetable_button('Экзамены - 1⃣', src.static.exam_c1.shortname. user_id)
-    exam_c2_btn = create_timetable_button('Экзамены - 2️⃣', src.static.exam_c2.shortname. user_id)
-    exam_c3_btn = create_timetable_button('Экзамены - 3️⃣', src.static.exam_c3.shortname. user_id)
-    exam_c4_btn = create_timetable_button('Экзамены - 4️⃣', src.static.exam_c4.shortname. user_id)
+    exam_c1_btn = create_timetable_button('Экзамены - 1⃣', src.static.exam_c1.shortname, user_id)
+    exam_c2_btn = create_timetable_button('Экзамены - 2️⃣', src.static.exam_c2.shortname, user_id)
+    exam_c3_btn = create_timetable_button('Экзамены - 3️⃣', src.static.exam_c3.shortname, user_id)
+    exam_c4_btn = create_timetable_button('Экзамены - 4️⃣', src.static.exam_c4.shortname, user_id)
 
     back_button = create_button('⬅️ Назад', 'main_menu')
-    refresh_btn = create_button('Обновить 🔄', 'refresh_pravo')
+    refresh_btn = create_button('Обновить 🔄', 'refresh_exams')
 
     keyboard = {
     "one_time": True,
@@ -138,6 +140,8 @@ def exams_keyboard(user_id):
                 [back_button, refresh_btn]]
 
     }
+
+    return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
 
 
 # Keyboard for a notification (only 'back' button to show main menu)

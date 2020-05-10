@@ -54,7 +54,15 @@ class LFTableBot():
         # This is to prevent late notifications if the bot was down for a long time
         self.timesdb.connect()
         for timetable in src.static.all_timetables:
-            update_time = src.gettime.ttb_gettime(timetable).strftime('%d.%m.%Y %H:%M:%S')
+
+            # Get ttb update time from law.bsu.by
+            # Use different gettime functions for ussual and credit/exam timetables. See src.gettime.py
+            if timetable in src.static.credit_exam_timetables:
+                data = src.gettime.credit_exam_gettime(timetable)
+                update_time = data['time'].strftime('%d.%m.%Y %H:%M:%S')
+            else:
+                update_time = src.gettime.ttb_gettime(timetable).strftime('%d.%m.%Y %H:%M:%S')
+            
             self.timesdb.write_time(timetable.shortname, update_time)
         self.timesdb.close()
 
@@ -181,7 +189,8 @@ class LFTableBot():
             self.send_message(user_id, src.messages.download_text(), src.keyboards.download_keyboard())
 
         # Show menus for specialties (keyboard contains timetable buttons
-        if callback in ['pravo_menu', 'ek_polit_menu', 'mag_menu', 'refresh_pravo', 'refresh_ek_polit', 'refresh_mag']:
+        if callback in ['pravo_menu', 'ek_polit_menu', 'mag_menu', 'credits_menu', 'exams_menu', 
+                        'refresh_pravo', 'refresh_ek_polit', 'refresh_mag', 'refresh_credits', 'refresh_exams']:
 
             if callback in ['pravo_menu', 'refresh_pravo']:
                 self.send_message(user_id,
@@ -196,10 +205,23 @@ class LFTableBot():
                                   src.messages.mag_menu_text(),
                                   src.keyboards.mag_keyboard(user_id))
 
+            elif callback in ['credits_menu', 'refresh_credits']:
+                self.send_message(user_id,
+                                  src.messages.credits_menu_text(),
+                                  src.keyboards.credits_keyboard(user_id))
+
+            elif callback in ['exams_menu', 'refresh_exams']:
+                self.send_message(user_id,
+                                  src.messages.exams_menu_text(),
+                                  src.keyboards.exams_keyboard(user_id))
+            
+
         # If timetable button was pressed update keyboard with enable/disable notifications buttons
         if  callback in ['pravo_c1', 'pravo_c2', 'pravo_c3', 'pravo_c4',
-                          'ek_polit_c1', 'ek_polit_c2', 'ek_polit_c3', 'ek_polit_c4',
-                        'mag_c1', 'mag_c2']:
+                         'ek_polit_c1', 'ek_polit_c2', 'ek_polit_c3', 'ek_polit_c4',
+                         'mag_c1', 'mag_c2',
+                         'exam_c1', 'exam_c2', 'exam_c3', 'exam_c4',
+                         'credit_c1', 'credit_c2', 'credit_c3', 'credit_c4']:
 
             # See TTB objects in src/static.py
             timetable = getattr(src.static, callback)
@@ -229,6 +251,15 @@ class LFTableBot():
                 self.send_message(user_id,
                                   src.messages.mag_menu_text(),
                                   src.keyboards.mag_keyboard(user_id))
+            elif callback in ['credit_c1', 'credit_c2', 'credit_c3', 'credit_c4']:
+                self.send_message(user_id,
+                                src.messages.credits_menu_text(),
+                                src.keyboards.credits_keyboard(user_id))
+
+            elif callback in ['exam_c1', 'exam_c2', 'exam_c3', 'exam_c4']:
+                self.send_message(user_id,
+                                src.messages.exams_menu_text(),
+                                src.keyboards.exams_keyboard(user_id))
 
         # 'Stop' button. Make user non-active until 'start' button is pressed again
         if callback == 'stop':
@@ -253,8 +284,15 @@ class LFTableBot():
         for checking_ttb in src.static.all_timetables:
 
             # Get timetable update time from law.bsu.by
-            # See 'src/gettime.py' module
-            update_time = src.gettime.ttb_gettime(checking_ttb).strftime('%d.%m.%Y %H:%M:%S')
+            # Use different gettime functions for ussual and credit/exam timetables. See src.gettime.py
+            if checking_ttb in src.static.credit_exam_timetables:
+                data = src.gettime.credit_exam_gettime(checking_ttb)
+                update_time = data['time'].strftime('%d.%m.%Y %H:%M:%S')
+                timetable_url = data['url']
+            else:
+                update_time = src.gettime.ttb_gettime(checking_ttb).strftime('%d.%m.%Y %H:%M:%S')
+                timetable_url = checking_ttb.url
+
 
             # Get old update time from the TimesDB.
             old_update_time = self.timesdb.get_time(checking_ttb.shortname)
@@ -283,12 +321,12 @@ class LFTableBot():
 
                         try:
                             self.send_message(user_id,
-                                            src.messages.notification_text(checking_ttb, dt_update_time),
+                                            src.messages.notification_text(checking_ttb, dt_update_time, timetable_url),
                                             src.keyboards.notification_keyboard())
                             logger.info("'" + checking_ttb.shortname + "' notification was sent to user " + user_id)
                         # If user blocked this bot & etc...
                         except Exception as e:
-                            logger.info("can't send '" + checking_ttb.shortname + "' notification to user " + user_id + ", skip")
+                            logger.info("can't send '" + checking_ttb.shortname + "' notification to user " + user_id + ", skip. EXCEPTION: " + str(e))
                             continue
 
                     # Write to log if user is not active
