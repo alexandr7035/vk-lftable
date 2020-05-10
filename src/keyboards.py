@@ -39,10 +39,14 @@ def main_keyboard():
     mag_btn  = create_button('📒 Магистратура', 'mag_menu')
     stop_btn = create_button('Отключить 🚫', 'stop')
 
+    credits_btn = create_button("💀 Зачеты", "credits_menu")
+    exams_btn = create_button("☠️ Экзамены", "exams_menu")
+
     keyboard = {
     "one_time": True,
     "buttons": [[pravo_btn, ek_polit_btn],
-                [mag_btn, stop_btn]]
+                [mag_btn, credits_btn],
+                [exams_btn, stop_btn]]
     }
 
     return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
