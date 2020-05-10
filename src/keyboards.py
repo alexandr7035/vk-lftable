@@ -70,6 +70,7 @@ def pravo_keyboard(user_id):
 
     return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
 
+
 def ek_polit_keyboard(user_id):
     ek_polit_c1_btn = create_timetable_button('Эк-полит. - 1⃣', src.static.ek_polit_c1.shortname, user_id)
     ek_polit_c2_btn = create_timetable_button('Эк-полит. - 2⃣', src.static.ek_polit_c2.shortname, user_id)
@@ -87,6 +88,7 @@ def ek_polit_keyboard(user_id):
 
     return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
 
+
 def mag_keyboard(user_id):
     mag_c1_btn = create_timetable_button('Маг. - 1⃣', src.static.mag_c1.shortname, user_id)
     mag_c2_btn = create_timetable_button('Маг. - 2⃣', src.static.mag_c2.shortname, user_id)
@@ -100,6 +102,43 @@ def mag_keyboard(user_id):
     }
 
     return(json.dumps(keyboard, ensure_ascii=False).encode("utf-8"))
+
+
+def credits_keyboard(user_id):
+    credit_c1_btn = create_timetable_button('Зачеты - 1⃣', src.static.credit_c1.shortname. user_id)
+    credit_c2_btn = create_timetable_button('Зачеты - 1⃣', src.static.credit_c2.shortname. user_id)
+    credit_c3_btn = create_timetable_button('Зачеты - 1⃣', src.static.credit_c3.shortname. user_id)
+    credit_c4_btn = create_timetable_button('Зачеты - 1⃣', src.static.credit_c4.shortname. user_id)
+
+    back_button = create_button('⬅️ Назад', 'main_menu')
+    refresh_btn = create_button('Обновить 🔄', 'refresh_pravo')
+
+    keyboard = {
+    "one_time": True,
+    "buttons": [[credit_c1_btn, credit_c2_btn],
+                [credit_c3_btn, credit_c4_btn],
+                [back_button, refresh_btn]]
+
+    }
+
+
+def exams_keyboard(user_id):
+    exam_c1_btn = create_timetable_button('Экзамены - 1⃣', src.static.exam_c1.shortname. user_id)
+    exam_c2_btn = create_timetable_button('Экзамены - 2️⃣', src.static.exam_c2.shortname. user_id)
+    exam_c3_btn = create_timetable_button('Экзамены - 3️⃣', src.static.exam_c3.shortname. user_id)
+    exam_c4_btn = create_timetable_button('Экзамены - 4️⃣', src.static.exam_c4.shortname. user_id)
+
+    back_button = create_button('⬅️ Назад', 'main_menu')
+    refresh_btn = create_button('Обновить 🔄', 'refresh_pravo')
+
+    keyboard = {
+    "one_time": True,
+    "buttons": [[exam_c1_btn, exam_c2_btn],
+                [exam_c3_btn, exam_c4_btn],
+                [back_button, refresh_btn]]
+
+    }
+
 
 # Keyboard for a notification (only 'back' button to show main menu)
 def notification_keyboard():

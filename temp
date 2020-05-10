@@ -1,0 +1,16 @@
+def exams_keyboard(user_id):
+    exam_c1_btn = create_timetable_button('Зачеты - 1⃣', src.static.exam_c1.shortname. user_id)
+    exam_c2_btn = create_timetable_button('Зачеты - 1⃣', src.static.exam_c1.shortname. user_id)
+    exam_c3_btn = create_timetable_button('Зачеты - 1⃣', src.static.exam_c1.shortname. user_id)
+    exam_c4_btn = create_timetable_button('Зачеты - 1⃣', src.static.exam_c1.shortname. user_id)
+
+    back_button = create_button('⬅️ Назад', 'main_menu')
+    refresh_btn = create_button('Обновить 🔄', 'refresh_pravo')
+
+    keyboard = {
+    "one_time": True,
+    "buttons": [[exam_c1_btn, exam_c2_btn],
+                [exam_c3_btn, exam_c4_btn],
+                [back_button, refresh_btn]]
+
+    }
