@@ -145,7 +145,7 @@ def exams_keyboard(user_id):
 
 
 # Keyboard for a notification (only 'back' button to show main menu)
-def notification_keyboard():
+def back_to_main_menu_keyboard():
     back_button = create_button('⬅ В меню', 'main_menu', 'green')
 
     keyboard = {

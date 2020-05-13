@@ -115,3 +115,9 @@ def notification_text(timetable_name, dt_update_time, timetable_url):
     text += '⬇️ Скачать: ' + timetable_url + '\n\n'
 
     return(text)
+
+
+def server_unreachable_text():
+    text = '⚠️ Извините, сервер временно недоступен.\n'
+
+    return(text)

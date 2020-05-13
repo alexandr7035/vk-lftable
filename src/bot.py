@@ -141,7 +141,13 @@ class LFTableBot():
                 if data['object'].get('payload'):
                     callback = json.loads(data['object']['payload'])['button']
                     # Call method wich handles button click
-                    self.handle_button_callback(user_id, callback)
+                    try:
+                        self.handle_button_callback(user_id, callback)
+                    except Exception:
+                        self.send_message(user_id,
+                                          src.messages.server_unreachable_text(),
+                                          src.keyboards.back_to_main_menu_keyboard())
+                        logger.critical("lftable server is unreachable. MESSAGE: " + str(data["object"]))
                 # Usual message was sent
                 else:
                     self.send_message(user_id,
@@ -315,7 +321,7 @@ class LFTableBot():
                         try:
                             self.send_message(user_id,
                                             src.messages.notification_text(checking_ttb.name, dt_update_time, timetable_url),
-                                            src.keyboards.notification_keyboard())
+                                            src.keyboards.back_to_main_menu_keyboard())
                             logger.info("'" + checking_ttb.shortname + "' notification was sent to user " + user_id)
                         # If user blocked this bot & etc...
                         except Exception as e:
