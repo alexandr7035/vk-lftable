@@ -17,7 +17,7 @@ log_dir = 'log/'
 log_file = log_dir + 'lftable.log'
 
 # Intervals (s)
-check_updates_interval = 120
+check_updates_interval = 40
 send_message_interval = 0.055
 max_request_delay = 5
 
