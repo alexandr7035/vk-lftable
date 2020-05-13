@@ -60,7 +60,7 @@ class LFTableBot():
             data = src.get_timetable.get_timetable(timetable.shortname)
             update_time = data['update_time']
             self.timesdb.write_time(timetable.shortname, update_time)
-            
+
         self.timesdb.close()
 
         # Timejob for notifications
@@ -286,7 +286,6 @@ class LFTableBot():
             
             update_time = data['update_time']
             timetable_url = data['relevant_url']
-            timetable_name = data['full_name']
 
             # Get old update time from the TimesDB.
             old_update_time = self.timesdb.get_time(checking_ttb.shortname)
