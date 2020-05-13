@@ -1,7 +1,7 @@
 import time
 import src.static
-import src.gettime
 import datetime
+import src.get_timetable
 
 # Each function in this module returns message text according to its name
 
@@ -34,7 +34,10 @@ def pravo_menu_text():
 
     for ttb, course in zip([src.static.pravo_c1, src.static.pravo_c2,
                 src.static.pravo_c3, src.static.pravo_c4], ['1️⃣', '2️⃣', '3️⃣', '4️⃣']):
-                    text += str(course) + '-й курс: ' + ttb.url + ' - ' + src.gettime.ttb_gettime(ttb).strftime('%d.%m.%Y %H:%M') + '\n'
+                    
+                    data = src.get_timetable.get_timetable(ttb.shortname)
+
+                    text += str(course) + '-й курс: ' + data['relevant_url'] + ' - ' + data['update_time'] + '\n'
     text += '----------------\n'
     text += 'Информанция обновлена: ' + datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")
 
@@ -45,7 +48,9 @@ def ek_polit_menu_text():
 
     for ttb, course in zip([src.static.ek_polit_c1, src.static.ek_polit_c2,
                 src.static.ek_polit_c3, src.static.ek_polit_c4], ['1️⃣', '2️⃣', '3️⃣', '4️⃣']):
-                    text += str(course) + '-й курс: ' + ttb.url + ' - ' + src.gettime.ttb_gettime(ttb).strftime('%d.%m.%Y %H:%M') + '\n'
+                    data = src.get_timetable.get_timetable(ttb.shortname)
+                    text += str(course) + '-й курс: ' + data['relevant_url'] + ' - ' + data['update_time'] + '\n'
+
     text += '----------------\n'
     text += 'Информанция обновлена: ' + datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")
 
@@ -55,7 +60,8 @@ def mag_menu_text():
     text = '📚 Магистратура 📚\n\n'
 
     for ttb, course in zip([src.static.mag_c1, src.static.mag_c2], ['1️⃣', '2️⃣']):
-                    text += str(course) + '-й курс: ' + ttb.url + ' - ' + src.gettime.ttb_gettime(ttb).strftime('%d.%m.%Y %H:%M') + '\n'
+                    data = src.get_timetable.get_timetable(ttb.shortname)
+                    text += str(course) + '-й курс: ' + data['relevant_url'] + ' - ' + data['update_time'] + '\n'
     text += '----------------\n'
     text += 'Информанция обновлена: ' + datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")
 
@@ -67,8 +73,8 @@ def credits_menu_text():
 
     for ttb, course in zip([src.static.credit_c1, src.static.credit_c2,
                 src.static.credit_c3, src.static.credit_c4], ['1️⃣', '2️⃣', '3️⃣', '4️⃣']):
-                    data = src.gettime.credit_exam_gettime(ttb)
-                    text += str(course) + '-й курс: ' + data['url'] + ' - ' + data['time'].strftime('%d.%m.%Y %H:%M') + '\n'
+                    data = src.get_timetable.get_timetable(ttb.shortname)
+                    text += str(course) + '-й курс: ' + data['relevant_url'] + ' - ' + data['update_time'] + '\n'
     text += '----------------\n'
     text += 'Информанция обновлена: ' + datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")
 
@@ -80,8 +86,8 @@ def exams_menu_text():
 
     for ttb, course in zip([src.static.exam_c1, src.static.exam_c2,
                 src.static.exam_c3, src.static.exam_c4], ['1️⃣', '2️⃣', '3️⃣', '4️⃣']):
-                    data = src.gettime.credit_exam_gettime(ttb)
-                    text += str(course) + '-й курс: ' + data['url'] + ' - ' + data['time'].strftime('%d.%m.%Y %H:%M') + '\n'
+                    data = src.get_timetable.get_timetable(ttb.shortname)
+                    text += str(course) + '-й курс: ' + data['relevant_url'] + ' - ' + data['update_time'] + '\n'
     text += '----------------\n'
     text += 'Информанция обновлена: ' + datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")
 
