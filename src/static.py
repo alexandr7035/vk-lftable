@@ -21,9 +21,6 @@ check_updates_interval = 40
 send_message_interval = 0.055
 max_request_delay = 5
 
-# For download buttom to prevent spam control
-download_interval = 0.01
-
 # Class to store timetable options
 class TTB():
     pass
@@ -78,8 +75,6 @@ mag_c1.shortname = 'mag_c1'
 
 mag_c2.name = 'Магистратура, 2-й курс'
 mag_c2.shortname = 'mag_c2'
-
-
 
 credit_c1.name = 'Зачеты, 1-й курс'
 credit_c1.shortname = 'credit_c1'
