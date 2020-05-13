@@ -18,7 +18,6 @@ import src.db_classes
 import src.get_timetable
 from src.logger import *
 
-import src.gettime
 
 # Tokens
 try:
@@ -57,13 +56,11 @@ class LFTableBot():
         self.timesdb.connect()
         for timetable in src.static.all_timetables:
 
-            # Get ttb update time from law.bsu.by
-            # Use different gettime functions for ussual and credit/exam timetables. See src.gettime.py
-
+            # Get fresh timetable info from server
             data = src.get_timetable.get_timetable(timetable.shortname)
             update_time = data['update_time']
-            
             self.timesdb.write_time(timetable.shortname, update_time)
+            
         self.timesdb.close()
 
         # Timejob for notifications
