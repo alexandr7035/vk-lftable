@@ -59,11 +59,9 @@ class LFTableBot():
 
             # Get ttb update time from law.bsu.by
             # Use different gettime functions for ussual and credit/exam timetables. See src.gettime.py
-            if timetable in src.static.credit_exam_timetables:
-                data = src.gettime.credit_exam_gettime(timetable)
-                update_time = data['time'].strftime('%d.%m.%Y %H:%M:%S')
-            else:
-                update_time = src.gettime.ttb_gettime(timetable).strftime('%d.%m.%Y %H:%M:%S')
+
+            data = src.get_timetable.get_timetable(timetable.shortname)
+            update_time = data['update_time']
             
             self.timesdb.write_time(timetable.shortname, update_time)
         self.timesdb.close()
@@ -76,7 +74,7 @@ class LFTableBot():
                           seconds=src.static.check_updates_interval)
         scheduler.start()
         atexit.register(lambda: scheduler.shutdown())
-        
+
 
     # Create necessary directories and files
     def prepare_workspace(self):
