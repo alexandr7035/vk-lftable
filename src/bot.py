@@ -57,7 +57,12 @@ class LFTableBot():
         for timetable in src.static.all_timetables:
 
             # Get fresh timetable info from server
-            data = src.get_timetable.get_timetable(timetable.shortname)
+            try:
+                data = src.get_timetable.get_timetable(timetable.shortname)
+            except Exception:
+                print("Can't connect to lftable server on start. Exit")
+                exit()
+
             update_time = data['update_time']
             self.timesdb.write_time(timetable.shortname, update_time)
 
