@@ -15,8 +15,10 @@ import src.static
 import src.messages
 import src.keyboards
 import src.db_classes
+import src.get_timetable
 from src.logger import *
 
+import src.gettime
 
 # Tokens
 try:
@@ -74,6 +76,7 @@ class LFTableBot():
                           seconds=src.static.check_updates_interval)
         scheduler.start()
         atexit.register(lambda: scheduler.shutdown())
+        
 
     # Create necessary directories and files
     def prepare_workspace(self):
@@ -274,6 +277,7 @@ class LFTableBot():
                               keyboard=keyboard,
                               dont_parse_links=1)
 
+
     def notifications_timejob(self):
         print('Checking for ttb updates was started: ', datetime.now().strftime("%d.%m.%Y %Y %H:%M:%S"))
 
@@ -282,17 +286,12 @@ class LFTableBot():
 
         # See 'all_timetables' list in 'src/static.py'
         for checking_ttb in src.static.all_timetables:
-
-            # Get timetable update time from law.bsu.by
-            # Use different gettime functions for ussual and credit/exam timetables. See src.gettime.py
-            if checking_ttb in src.static.credit_exam_timetables:
-                data = src.gettime.credit_exam_gettime(checking_ttb)
-                update_time = data['time'].strftime('%d.%m.%Y %H:%M:%S')
-                timetable_url = data['url']
-            else:
-                update_time = src.gettime.ttb_gettime(checking_ttb).strftime('%d.%m.%Y %H:%M:%S')
-                timetable_url = checking_ttb.url
-
+            
+            data = src.get_timetable.get_timetable(checking_ttb.shortname)
+            
+            update_time = data['update_time']
+            timetable_url = data['relevant_url']
+            timetable_name = data['full_name']
 
             # Get old update time from the TimesDB.
             old_update_time = self.timesdb.get_time(checking_ttb.shortname)
@@ -321,7 +320,7 @@ class LFTableBot():
 
                         try:
                             self.send_message(user_id,
-                                            src.messages.notification_text(checking_ttb, dt_update_time, timetable_url),
+                                            src.messages.notification_text(checking_ttb.name, dt_update_time, timetable_url),
                                             src.keyboards.notification_keyboard())
                             logger.info("'" + checking_ttb.shortname + "' notification was sent to user " + user_id)
                         # If user blocked this bot & etc...
