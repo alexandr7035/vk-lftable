@@ -276,13 +276,6 @@ class LFTableBot():
             logger.info("user " + user_id + " is now non-active")
             self.send_message(user_id, src.messages.stop_text())
 
-    def send_message(self, user_id, text, keyboard=None):
-        self.api.messages.send(access_token=vk_token,
-                              user_id=user_id,
-                              message=text,
-                              keyboard=keyboard,
-                              dont_parse_links=1)
-
 
     def notifications_timejob(self):
         print('Checking for ttb updates was started: ', datetime.now().strftime("%d.%m.%Y %Y %H:%M:%S"))
@@ -355,3 +348,17 @@ class LFTableBot():
 
         # Close 'times.db' until next check.
         self.timesdb.close()
+
+
+    def get_random_id(self):
+        return(int(round(time.time() * 1000)))
+
+    
+    def send_message(self, user_id, text, keyboard=None):
+        self.api.messages.send(access_token=vk_token,
+                              user_id=user_id,
+                              message=text,
+                              keyboard=keyboard,
+                              dont_parse_links=1,
+                              v=src.static.vk_api_version,
+                              random_id=self.get_random_id())
