@@ -79,7 +79,7 @@ def mag_menu_text():
 
 
 def credits_menu_text():
-    text = '📚 Экономическое право и политология 📚\n\n'
+    text = '📚 Зачеты 📚\n\n'
 
     for ttb, course in zip([src.static.credit_c1, src.static.credit_c2,
                 src.static.credit_c3, src.static.credit_c4], ['1️⃣', '2️⃣', '3️⃣', '4️⃣']):
@@ -96,7 +96,7 @@ def credits_menu_text():
 
 
 def exams_menu_text():
-    text = '📚 Экономическое право и политология 📚\n\n'
+    text = '📚 Экзамены 📚\n\n'
 
     for ttb, course in zip([src.static.exam_c1, src.static.exam_c2,
                 src.static.exam_c3, src.static.exam_c4], ['1️⃣', '2️⃣', '3️⃣', '4️⃣']):
@@ -139,3 +139,4 @@ def server_unreachable_text():
     text = '⚠️ Извините, сервер временно недоступен.\n'
 
     return(text)
+
