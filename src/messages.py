@@ -65,13 +65,11 @@ def ek_polit_menu_text():
 def mag_menu_text():
     text = '📚 Магистратура 📚\n\n'
 
-    for ttb, course in zip([src.static.mag_c1, src.static.mag_c2], ['1️⃣', '2️⃣']):
+    data = src.get_timetable.get_timetable(src.static.mag_c1.shortname)
+    dt_update_time = datetime.datetime.strptime(data['update_time'], '%d.%m.%Y %H:%M:%S')
+    formatted_date = dt_update_time.strftime("%d.%m.%Y %H:%M")
 
-                    data = src.get_timetable.get_timetable(ttb.shortname)
-                    dt_update_time = datetime.datetime.strptime(data['update_time'], '%d.%m.%Y %H:%M:%S')
-                    formatted_date = dt_update_time.strftime("%d.%m.%Y %H:%M")
-
-                    text += str(course) + '-й курс: ' + data['relevant_url'] + ' - ' + formatted_date + '\n'
+    text += '1️⃣-й курс: ' + data['relevant_url'] + ' - ' + formatted_date + '\n'
     text += '----------------\n'
     text += 'Информанция обновлена: ' + datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")
 

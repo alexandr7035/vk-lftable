@@ -148,7 +148,8 @@ class LFTableBot():
                     # Call method wich handles button click
                     try:
                         self.handle_button_callback(user_id, callback)
-                    except Exception:
+                    except Exception as e:
+                        logger.critical("ERROR " + str(e))
                         self.send_message(user_id,
                                           src.messages.server_unreachable_text(),
                                           src.keyboards.back_to_main_menu_keyboard())
@@ -228,7 +229,7 @@ class LFTableBot():
         # If timetable button was pressed update keyboard with enable/disable notifications buttons
         if  callback in ['pravo_c1', 'pravo_c2', 'pravo_c3', 'pravo_c4',
                          'ek_polit_c1', 'ek_polit_c2', 'ek_polit_c3', 'ek_polit_c4',
-                         'mag_c1', 'mag_c2',
+                         'mag_c1', 
                          'exam_c1', 'exam_c2', 'exam_c3', 'exam_c4',
                          'credit_c1', 'credit_c2', 'credit_c3', 'credit_c4']:
 
@@ -256,7 +257,7 @@ class LFTableBot():
                 self.send_message(user_id,
                                   src.messages.ek_polit_menu_text(),
                                   src.keyboards.ek_polit_keyboard(user_id))
-            elif callback in ['mag_c1', 'mag_c2']:
+            elif callback == 'mag_c1':
                 self.send_message(user_id,
                                   src.messages.mag_menu_text(),
                                   src.keyboards.mag_keyboard(user_id))

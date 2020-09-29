@@ -91,13 +91,12 @@ def ek_polit_keyboard(user_id):
 
 def mag_keyboard(user_id):
     mag_c1_btn = create_timetable_button('Маг. - 1⃣', src.static.mag_c1.shortname, user_id)
-    mag_c2_btn = create_timetable_button('Маг. - 2⃣', src.static.mag_c2.shortname, user_id)
     refresh_btn = create_button('Обновить 🔄', 'refresh_mag')
     back_button = create_button('⬅️ Назад', 'main_menu')
 
     keyboard = {
     "one_time": True,
-    "buttons": [[mag_c1_btn, mag_c2_btn],
+    "buttons": [[mag_c1_btn],
                 [back_button, refresh_btn]]
     }
 
