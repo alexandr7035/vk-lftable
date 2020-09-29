@@ -22,27 +22,27 @@ send_message_interval = 0.055
 max_request_delay = 5
 
 # Class to store timetable options
-class TTB():
+class Timetable():
     pass
 
 # All types of timetables for all courses
-pravo_c1 = TTB()
-pravo_c2 = TTB()
-pravo_c3 = TTB()
-pravo_c4 = TTB()
-mag_c1 = TTB()
-ek_polit_c1 = TTB()
-ek_polit_c2 = TTB()
-ek_polit_c3 = TTB()
-ek_polit_c4 = TTB()
-credit_c1 = TTB()
-exam_c1 = TTB()
-credit_c2 = TTB()
-exam_c2 = TTB()
-credit_c3 = TTB()
-exam_c3 = TTB()
-credit_c4 = TTB()
-exam_c4 = TTB()
+pravo_c1 = Timetable()
+pravo_c2 = Timetable()
+pravo_c3 = Timetable()
+pravo_c4 = Timetable()
+mag_c1 = Timetable()
+ek_polit_c1 = Timetable()
+ek_polit_c2 = Timetable()
+ek_polit_c3 = Timetable()
+ek_polit_c4 = Timetable()
+credit_c1 = Timetable()
+exam_c1 = Timetable()
+credit_c2 = Timetable()
+exam_c2 = Timetable()
+credit_c3 = Timetable()
+exam_c3 = Timetable()
+credit_c4 = Timetable()
+exam_c4 = Timetable()
 
 # Timetable data
 pravo_c1.name = 'Правоведение, 1-й курс'

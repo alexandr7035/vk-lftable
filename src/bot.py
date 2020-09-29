@@ -233,7 +233,7 @@ class LFTableBot():
                          'exam_c1', 'exam_c2', 'exam_c3', 'exam_c4',
                          'credit_c1', 'credit_c2', 'credit_c3', 'credit_c4']:
 
-            # See TTB objects in src/static.py
+            # See Timetable() objects in src/static.py
             timetable = getattr(src.static, callback)
 
             # Enable/disable notifications
