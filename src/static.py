@@ -1,5 +1,5 @@
 # Version number
-lftable_version = '4.0'
+lftable_version = '4.2'
 
 # API version
 vk_api_version = '5.90'
@@ -22,28 +22,27 @@ send_message_interval = 0.055
 max_request_delay = 5
 
 # Class to store timetable options
-class TTB():
+class Timetable():
     pass
 
 # All types of timetables for all courses
-pravo_c1 = TTB()
-pravo_c2 = TTB()
-pravo_c3 = TTB()
-pravo_c4 = TTB()
-mag_c1 = TTB()
-mag_c2 = TTB()
-ek_polit_c1 = TTB()
-ek_polit_c2 = TTB()
-ek_polit_c3 = TTB()
-ek_polit_c4 = TTB()
-credit_c1 = TTB()
-exam_c1 = TTB()
-credit_c2 = TTB()
-exam_c2 = TTB()
-credit_c3 = TTB()
-exam_c3 = TTB()
-credit_c4 = TTB()
-exam_c4 = TTB()
+pravo_c1 = Timetable()
+pravo_c2 = Timetable()
+pravo_c3 = Timetable()
+pravo_c4 = Timetable()
+mag_c1 = Timetable()
+ek_polit_c1 = Timetable()
+ek_polit_c2 = Timetable()
+ek_polit_c3 = Timetable()
+ek_polit_c4 = Timetable()
+credit_c1 = Timetable()
+exam_c1 = Timetable()
+credit_c2 = Timetable()
+exam_c2 = Timetable()
+credit_c3 = Timetable()
+exam_c3 = Timetable()
+credit_c4 = Timetable()
+exam_c4 = Timetable()
 
 # Timetable data
 pravo_c1.name = 'Правоведение, 1-й курс'
@@ -73,9 +72,6 @@ ek_polit_c4.shortname = 'ek_polit_c4'
 mag_c1.name = 'Магистратура, 1-й курс'
 mag_c1.shortname = 'mag_c1'
 
-mag_c2.name = 'Магистратура, 2-й курс'
-mag_c2.shortname = 'mag_c2'
-
 credit_c1.name = 'Зачеты, 1-й курс'
 credit_c1.shortname = 'credit_c1'
 
@@ -104,7 +100,7 @@ exam_c4.shortname = 'exam_c4'
 # List to simplify 'for' loops (in order not to write all timetables many times)
 all_timetables = [pravo_c1, pravo_c2, pravo_c3, pravo_c4, 
                  ek_polit_c1, ek_polit_c2, ek_polit_c3, ek_polit_c4,
-                 mag_c1, mag_c2,
+                 mag_c1,
                  credit_c1, credit_c2, credit_c3, credit_c4, 
                  exam_c1, exam_c2, exam_c3, exam_c4]
 
