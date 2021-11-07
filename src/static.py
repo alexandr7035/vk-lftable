@@ -5,7 +5,7 @@ lftable_version = '4.3'
 vk_api_version = '5.90'
 
 # LFTable server address
-lftable_server_address = 'http://api.lftable.site'
+lftable_server_address = 'http://api.lftable.xyz'
 
 # Pathes
 db_dir = 'db/'
