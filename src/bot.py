@@ -290,7 +290,7 @@ class LFTableBot():
             try:
                 data = src.get_timetable.get_timetable(checking_ttb.shortname)
             except Exception:
-                logger.critical("can't get data from api.lftable.site. Left cache as is")
+                logger.critical("can't get data from api.lftable.xyz. Left cache as is")
                 return
 
             update_time = data['update_time']
